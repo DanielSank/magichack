@@ -1,5 +1,6 @@
 alembic
 ipython
+PyMySQL
 pyyaml
 sqlalchemy
 sqlemon
