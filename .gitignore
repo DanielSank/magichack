@@ -1,3 +1,2 @@
-cloud_sql_proxy
+lib/
 *.pyc
-
