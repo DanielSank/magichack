@@ -7,15 +7,23 @@ from logging.config import fileConfig
 # access to the values within the .ini file in use.
 config = context.config
 
+# Database URL
+import sqlemon
+config.set_main_option(
+        'sqlalchemy.url',
+        sqlemon.get_sqlalchemy_url_for_client(
+            'magichack',
+            'local',
+            '../app.yaml'))
+
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+import magichack.models as models
+target_metadata = models.Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
