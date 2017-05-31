@@ -29,7 +29,7 @@ class CardColor(Base):
     card_id = Column(Integer, ForeignKey('cards.id'), primary_key=True)
     color_id = Column(Integer, ForeignKey('colors.id'), primary_key=True)
     value = Column(Integer, nullable=False)
-    card = relationship('Card', back_populates='costs')
+    card = relationship('Card', back_populates='colors')
     color = relationship('Color', back_populates='cards')
 
 
