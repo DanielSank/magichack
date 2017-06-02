@@ -1,4 +1,4 @@
-from __future__ import print_function, absolute_import
+from __future__ import print_function, absolute_impore
 
 from sqlalchemy import Table, Column, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
@@ -18,21 +18,6 @@ cards_and_secondary_types = Table(
         Column('secondary_type_id', Integer, ForeignKey('secondary_types.id')))
 
 
-class CardColor(Base):
-    """A card's mana cost for a particular color.
-
-    To explicitly indicate a color in the absence of a mana cost in that color,
-    use value=0.
-    """
-    __tablename__ = 'card_colors'
-
-    card_id = Column(Integer, ForeignKey('cards.id'), primary_key=True)
-    color_id = Column(Integer, ForeignKey('colors.id'), primary_key=True)
-    value = Column(Integer, nullable=False)
-    card = relationship('Card', back_populates='colors')
-    color = relationship('Color', back_populates='cards')
-
-
 class Card(Base):
     """A card"""
     __tablename__ = 'cards'
@@ -42,15 +27,21 @@ class Card(Base):
     primary_type = Column(String(CARD_PRIMARY_TYPE_LEN), nullable=False)
     flavor = Column(Text, nullable=True)
 
+    mana_w = Column(Integer, nullable=True)
+    mana_u = Column(Integer, nullable=True)
+    mana_b = Column(Integer, nullable=True)
+    mana_r = Column(Integer, nullable=True)
+    mana_g = Column(Integer, nullable=True)
+
     # one -> many
-    rules = relationship('Rule')
+    rules = relationship('Rule', back_populates='card')
 
     # many <-> many
     secondary_types = relationship(
             'SecondaryType',
             secondary=cards_and_secondary_types,
             back_populates='cards')
-    colors = relationship('CardColor', back_populates='cards')
+    # colors = relationship('CardColor', back_populates='cards')
 
     __mapper_args__ = {
             'polymorphic_identity': 'card',
@@ -90,6 +81,7 @@ class Rule(Base):
 
     # many -> one
     card_id = Column(Integer, ForeignKey('cards.id'), nullable=False)
+    card = relationship('Card', back_populates='rules')
 
 
 class SecondaryType(Base):
@@ -106,6 +98,7 @@ class SecondaryType(Base):
             back_populates='secondary_types')
 
 
+'''
 class Color(Base):
     __tablename__ = 'colors'
 
@@ -114,3 +107,19 @@ class Color(Base):
 
     # many <-> many
     cards = relationship('CardColor', back_populates='colors')
+
+
+class CardColor(Base):
+    """A card's mana cost for a particular color.
+
+    To explicitly indicate a color in the absence of a mana cost in that color,
+    use value=0.
+    """
+    __tablename__ = 'card_colors'
+
+    card_id = Column(Integer, ForeignKey('cards.id'), primary_key=True)
+    color_id = Column(Integer, ForeignKey('colors.id'), primary_key=True)
+    value = Column(Integer, nullable=False)
+    card = relationship('Card', back_populates='colors')
+    color = relationship('Color', back_populates='cards')
+'''
