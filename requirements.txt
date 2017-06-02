@@ -1,7 +1,10 @@
 alembic
+google-api-python-client
+httplib2
 ipython
+oauth2client == 4.*
+pandas
 PyMySQL
 pyyaml
 sqlalchemy
 sqlemon
-
