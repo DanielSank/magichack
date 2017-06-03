@@ -23,16 +23,30 @@ def get_cards_from_sheet(sheet_id, tab):
     data = sheet.read_range_as_DataFrame('{}!A1:F100'.format(tab))
     cards = []
     for _, row in data.iterrows():
-        major, minors = parse_type(row.TYPE)
+        constructor_kwargs = {}
+
+        constructor_kwargs['name'] = row['NAME']
+
+        major, minors = parse_type(row.TYPE.lower())
         secondary_types = [models.SecondaryType(name=minor)
                            for minor in minors]
+        constructor_kwargs['primary_type'] = major
+        constructor_kwargs['secondary_types'] = secondary_types
+
+        card_factory = models.card_factories[major]
+
         rule_texts = row.RULES.split(';')
-        rules = [models.Rule(text=rule_text) for rule_text in rule_texts]
-        card = models.Card(
-                name=row.NAME,
-                primary_type=major,
-                secondary_types=secondary_types,
-                rules=rules)
+        rules = [models.Rule (text=rule_text) for rule_text in rule_texts]
+        constructor_kwargs['rules'] = rules
+
+        print(row['PT'], major)
+        if row['PT'] != '':
+            power, toughness = row['PT'].split('/')
+            constructor_kwargs['power'] = power
+            constructor_kwargs['toughness'] = toughness
+
+        card = card_factory(**constructor_kwargs)
+
         cost = parse_cost(row['COST'])
         if cost is not None:
             for k, v in cost.items():
@@ -40,7 +54,9 @@ def get_cards_from_sheet(sheet_id, tab):
                     card.mana_colorless = v
                 else:
                     setattr(card, 'mana_{}'.format(k.lower()), v)
+
         cards.append(card)
+
     return cards
 
 
