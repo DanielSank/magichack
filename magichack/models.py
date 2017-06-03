@@ -11,6 +11,7 @@ CARD_PRIMARY_TYPE_LEN = 32
 SECONDARY_TYPE_NAME_LEN = 32
 SET_NAME_LEN = 32
 
+COLORS = ['_', 'W', 'U', 'B', 'R', 'G']
 
 cards_and_secondary_types = Table(
         'cards_and_secondary_types',
@@ -35,11 +36,19 @@ class Card(Base):
     primary_type = Column(String(CARD_PRIMARY_TYPE_LEN), nullable=False)
     flavor = Column(Text, nullable=True)
 
+    mana__ = Column(Integer, nullable=True)  # colorless
     mana_w = Column(Integer, nullable=True)
     mana_u = Column(Integer, nullable=True)
     mana_b = Column(Integer, nullable=True)
     mana_r = Column(Integer, nullable=True)
     mana_g = Column(Integer, nullable=True)
+
+    @property
+    def cost(self):
+        d = {}
+        for color in COLORS:
+            d[color] = getattr(self, 'mana_{}'.format(color.lower()))
+        return d
 
     # one -> many
     rules = relationship('Rule', back_populates='card')
