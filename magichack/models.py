@@ -1,4 +1,4 @@
-from __future__ import print_function, absolute_impore
+from __future__ import print_function, absolute_import
 
 from sqlalchemy import Table, Column, ForeignKey, Integer, String, Text
 from sqlalchemy.ext.declarative import declarative_base
