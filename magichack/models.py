@@ -9,6 +9,7 @@ Base = declarative_base()
 CARD_NAME_LEN = 64
 CARD_PRIMARY_TYPE_LEN = 32
 SECONDARY_TYPE_NAME_LEN = 32
+SET_NAME_LEN = 32
 
 
 cards_and_secondary_types = Table(
@@ -16,6 +17,13 @@ cards_and_secondary_types = Table(
         Base.metadata,
         Column('card_id', Integer, ForeignKey('cards.id')),
         Column('secondary_type_id', Integer, ForeignKey('secondary_types.id')))
+
+
+cards_and_sets = Table(
+        'cards_and_sets',
+        Base.metadata,
+        Column('card_id', Integer, ForeignKey('cards.id')),
+        Column('set_id', Integer, ForeignKey('sets.id')))
 
 
 class Card(Base):
@@ -42,6 +50,11 @@ class Card(Base):
             secondary=cards_and_secondary_types,
             back_populates='cards')
     # colors = relationship('CardColor', back_populates='cards')
+
+    sets = relationship(
+            'Set',
+            secondary=cards_and_sets,
+            back_populates='cards')
 
     __mapper_args__ = {
             'polymorphic_identity': 'card',
@@ -123,3 +136,16 @@ class CardColor(Base):
     card = relationship('Card', back_populates='colors')
     color = relationship('Color', back_populates='cards')
 '''
+
+
+class Set(Base):
+    __tablename__ = 'sets'
+
+    id = Column(Integer, primary_key=True)
+    name = Column(String(SET_NAME_LEN), unique=True)
+
+    # many <-> many
+    cards = relationship(
+            'Card',
+            secondary=cards_and_sets,
+            back_populates='sets')
