@@ -90,8 +90,22 @@ class Instant(Card):
     __mapper_args__ = {'polymorphic_identity': 'instant'}
 
 
+class Artifact(Card):
+    __mapper_args__ = {'polymorphic_identity': 'artifact'}
+
+
 class Land(Card):
     __mapper_args__ = {'polymorphic_identity': 'land'}
+
+
+card_factories = {
+        'enchantment': Enchantment,
+        'creature': Creature,
+        'sorcery': Sorcery,
+        'instant': Instant,
+        'artifact': Artifact,
+        'land': Land,
+        }
 
 
 class Rule(Base):
