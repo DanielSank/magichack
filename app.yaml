@@ -4,7 +4,7 @@ threadsafe: no
 
 handlers:
 - url: /.*
-  script: main.app
+  script: magichack.main.app
 
 libraries:
 - name: webapp2
