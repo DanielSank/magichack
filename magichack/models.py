@@ -61,6 +61,13 @@ class Card(Base):
             back_populates='cards')
     # colors = relationship('CardColor', back_populates='cards')
 
+    def cost_pretty_print(self):
+        pretty = '{colorless}{white}{blue}'.format(
+                colorless=self.mana__ if self.mana__ else '',
+                white = self.mana_w*'W' if self.mana_w else '',
+                blue = self.mana_u*'U' if self.mana_u else '')
+        return pretty
+
     sets = relationship(
             'Set',
             secondary=cards_and_sets,
