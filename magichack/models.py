@@ -1,6 +1,7 @@
 from __future__ import print_function, absolute_import
 
 from sqlalchemy import Table, Column, ForeignKey, Integer, String, Text
+from sqlalchemy import UnicodeText
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -34,7 +35,7 @@ class Card(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String(CARD_NAME_LEN), nullable=False)
     primary_type = Column(String(CARD_PRIMARY_TYPE_LEN), nullable=False)
-    flavor = Column(Text, nullable=True)
+    flavor = Column(UnicodeText, nullable=True)
 
     mana__ = Column(Integer, nullable=True)  # colorless
     mana_w = Column(Integer, nullable=True)
@@ -113,7 +114,7 @@ class Rule(Base):
     __tablename__ = 'rules'
 
     id = Column(Integer, primary_key=True)
-    text = Column(Text, nullable=False)
+    text = Column(UnicodeText, nullable=False)
 
     # many -> one
     card_id = Column(Integer, ForeignKey('cards.id'), nullable=False)
