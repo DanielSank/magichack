@@ -1,4 +1,5 @@
 /lib
-/secrets.py
+secrets.py
 *.pyc
+*.swp
 magichack/alembic/versions/
