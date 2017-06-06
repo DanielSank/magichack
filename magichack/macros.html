@@ -5,8 +5,8 @@
   {{ ' - ' }}
   {% for secondary_type in card.secondary_types %}
     {{ secondary_type.name }}
-  {% endfor %}<br>
-{% endif %}
+  {% endfor %}
+{% endif %}<br>
 {% for rule in card.rules %}
   {{ rule.text }}<br>
 {% endfor %}

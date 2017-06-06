@@ -7,6 +7,7 @@ from sqlalchemy import MetaData
 import sqlemon
 import webapp2
 
+import magichack.forms as forms
 import magichack.models as models
 import magichack.secrets as secrets
 
@@ -31,13 +32,19 @@ class MainPage(webapp2.RequestHandler):
             url))
 
 
-class ShowCards(webapp2.RequestHandler):
+class CardQuery(webapp2.RequestHandler):
     def get(self):
+        form = forms.CardQueryForm()
+        template = JINJA_ENVIRONMENT.get_template('card_query.html')
+        self.response.write(template.render({'form': form}))
+
+    def post(self):
+        form = forms.CardQueryForm(formdata=self.request.POST)
         session = session_maker()
-        cards = session.query(models.Creature).all()
+        card = session.query(models.Card).filter_by(name=form.name.data).one()
         template = JINJA_ENVIRONMENT.get_template('results.html')
         self.response.write(
-                template.render({'cards': cards}))
+                template.render({'cards': [card]}))
 
 
 class DBConnectionSQLAlchemy(webapp2.RequestHandler):
@@ -58,6 +65,6 @@ app = webapp2.WSGIApplication(
         [
             ('/main', MainPage),
             ('/sqlalchemy', DBConnectionSQLAlchemy),
-            ('/results', ShowCards),
+            ('/query', CardQuery),
         ],
         debug=not sqlemon.production_mode())
