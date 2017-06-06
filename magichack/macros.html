@@ -7,6 +7,7 @@
     {{ secondary_type.name }}
   {% endfor %}
 {% endif %}<br>
+{{ card.rarity or 'No rarity' }}<br>
 {% for rule in card.rules %}
   {{ rule.text }}<br>
 {% endfor %}
