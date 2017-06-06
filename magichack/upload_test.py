@@ -12,11 +12,17 @@ def test_mana_cost_re():
 def test_parse_cost():
     assert upload.parse_cost('3UB') == {
             '_': 3,
+            'W': None,
             'U': 1,
             'B': 1,
+            'R': None,
+            'G': None,
             }
     assert upload.parse_cost('WUUG') == {
+            '_': None,
             'W': 1,
             'U': 2,
+            'B': None,
+            'R': None,
             'G': 1,
             }

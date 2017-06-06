@@ -91,12 +91,8 @@ def parse_cost(cost):
         return None
     groups = MANA_COST_RE.match(cost).groups()
     cost = {}
-    cost['_'] = int(groups[0]) if groups[0] != '' else 0
+    cost['_'] = int(groups[0]) if groups[0] != '' else None
     for i, color in enumerate(COLORS[1:]):  # Skip colorless
-        cost[color] = len(groups[i+1])
-
-    sanitized_cost = {k: v for k, v in cost.items() if v!=0}
-    # Drop zero costs so that the value in the Card model is NULL. We
-    # do this because a cost of 0 for e.g. green means that the card is
-    # green but there's no actual green mana cost.
-    return sanitized_cost
+        num = len(groups[i+1])
+        cost[color] = num if num > 0 else None
+    return cost
