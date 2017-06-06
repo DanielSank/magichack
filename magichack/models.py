@@ -1,7 +1,7 @@
 from __future__ import print_function, absolute_import
 
 from sqlalchemy import Table, Column, ForeignKey, Integer, String, Text
-from sqlalchemy import UnicodeText
+from sqlalchemy import UnicodeText, Enum
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
 
@@ -36,6 +36,7 @@ class Card(Base):
     name = Column(String(CARD_NAME_LEN), nullable=False)
     primary_type = Column(String(CARD_PRIMARY_TYPE_LEN), nullable=False)
     flavor = Column(UnicodeText, nullable=True)
+    rarity = Column(Enum('common', 'uncommon', 'rare'), nullable=True)
 
     mana__ = Column(Integer, nullable=True)  # colorless
     mana_w = Column(Integer, nullable=True)
