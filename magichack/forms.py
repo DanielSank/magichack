@@ -5,3 +5,4 @@ import magichack.models as models
 
 class CardQueryForm(Form):
     name = StringField('Name', [validators.Length(max=models.CARD_NAME_LEN)])
+    cost = StringField('Cost')

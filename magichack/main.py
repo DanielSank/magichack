@@ -10,6 +10,7 @@ import webapp2
 import magichack.forms as forms
 import magichack.models as models
 import magichack.secrets as secrets
+import magichack.util as util
 
 
 JINJA_ENVIRONMENT = jinja2.Environment(
@@ -39,12 +40,32 @@ class CardQuery(webapp2.RequestHandler):
         self.response.write(template.render({'form': form}))
 
     def post(self):
-        form = forms.CardQueryForm(formdata=self.request.POST)
         session = session_maker()
-        card = session.query(models.Card).filter_by(name=form.name.data).one()
+        query = session.query(models.Card)
+        form = forms.CardQueryForm(formdata=self.request.POST)
+
+        # Name filter
+        card_name = form.name.data
+        if card_name:
+            query = query.filter_by(name=card_name)
+
+        # Cost filter
+        cost = form.cost.data
+        if cost is not None:
+            parsed_cost = util.parse_cost(cost)
+            for color in models.COLORS:
+                val = parsed_cost[color]
+                if val is not None:
+                    print("Filtering on {}={}".format(color, val))
+                    field = getattr(models.Card, 'mana_{}'.format(
+                        color.lower()))
+                    query = query.filter(field==val)
+
+        cards = query.all()
+
         template = JINJA_ENVIRONMENT.get_template('results.html')
         self.response.write(
-                template.render({'cards': [card]}))
+                template.render({'cards': cards}))
 
 
 class DBConnectionSQLAlchemy(webapp2.RequestHandler):
