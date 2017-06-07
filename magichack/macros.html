@@ -1,13 +1,21 @@
 {% macro show_card(card) -%}
-{{ card.name }} -- {{ card.cost_pretty_print() }}<br>
+<b>{{ card.name }}</b> -- 
+{% for letter in card.cost_pretty_print() %}
+  {% if letter not in ['W', 'U', 'B', 'R', 'G'] %}
+    {{ letter }}
+  {% else %}
+    <img src="/images/mana_{{ letter.lower() }}.svg" height="10px" width="10px"/>
+  {% endif %}
+{% endfor %}
+<br>
 {{ card.primary_type}}
 {% if card.secondary_types %}
   {{ ' - ' }}
   {% for secondary_type in card.secondary_types %}
     {{ secondary_type.name }}
   {% endfor %}
-{% endif %}<br>
-{{ card.rarity or 'No rarity' }}<br>
+{% endif %}
+<img src="/images/rarity_{{ card.rarity }}.svg" height="10px" width="10px"/><br>
 {% for rule in card.rules %}
   {{ rule.text }}<br>
 {% endfor %}
