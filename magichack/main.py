@@ -56,7 +56,6 @@ class CardQuery(webapp2.RequestHandler):
             for color in models.COLORS:
                 val = parsed_cost[color]
                 if val is not None:
-                    print("Filtering on {}={}".format(color, val))
                     field = getattr(models.Card, 'mana_{}'.format(
                         color.lower()))
                     query = query.filter(field==val)
@@ -65,7 +64,9 @@ class CardQuery(webapp2.RequestHandler):
 
         template = JINJA_ENVIRONMENT.get_template('results.html')
         self.response.write(
-                template.render({'cards': cards}))
+                template.render(
+                    {'cards': cards}))
+        session.close()
 
 
 class DBConnectionSQLAlchemy(webapp2.RequestHandler):
@@ -85,7 +86,7 @@ class DBConnectionSQLAlchemy(webapp2.RequestHandler):
 app = webapp2.WSGIApplication(
         [
             ('/main', MainPage),
-            ('/sqlalchemy', DBConnectionSQLAlchemy),
+            ('/tables', DBConnectionSQLAlchemy),
             ('/query', CardQuery),
         ],
         debug=not sqlemon.production_mode())
