@@ -3,6 +3,8 @@ api_version: 1
 threadsafe: no
 
 handlers:
+- url: /images
+  static_dir: images
 - url: /.*
   script: magichack.main.app
 
