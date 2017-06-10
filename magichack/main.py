@@ -49,6 +49,10 @@ class CardQuery(webapp2.RequestHandler):
         if card_name:
             query = query.filter_by(name=card_name)
 
+        # Primary type filter
+        primary_type = form.primary_type.data
+        query = query.filter_by(primary_type=primary_type)
+
         # Cost filter
         cost = form.cost.data
         if cost is not None:

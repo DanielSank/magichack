@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 <form method="POST">
-  <div>{{ form.name.label }}: {{ form.name }}</div>
-  <div>{{ form.cost.label }}: {{ form.cost }}</div>
+  <div>  {{ form.name.label }}: {{ form.name }}</div>
+  <div>  {{ form.cost.label }}: {{ form.cost }}</div>
+  <div>  {{ form.primary_type.label }}: {{ form.primary_type }}</div>
   <button type="submit">Submit</button>
 </form>
 {% endblock %}

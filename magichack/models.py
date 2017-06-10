@@ -13,6 +13,7 @@ SECONDARY_TYPE_NAME_LEN = 32
 SET_NAME_LEN = 32
 
 COLORS = ['_', 'W', 'U', 'B', 'R', 'G']
+TYPES = ['enchantment', 'creature', 'sorcery', 'instant', 'artifact', 'land']
 
 cards_and_secondary_types = Table(
         'cards_and_secondary_types',
