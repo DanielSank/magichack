@@ -51,7 +51,8 @@ class CardQuery(webapp2.RequestHandler):
 
         # Primary type filter
         primary_type = form.primary_type.data
-        query = query.filter_by(primary_type=primary_type)
+        if primary_type != 'any':
+            query = query.filter_by(primary_type=primary_type)
 
         # Cost filter
         cost = form.cost.data

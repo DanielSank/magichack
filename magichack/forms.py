@@ -11,4 +11,4 @@ class CardQueryForm(Form):
             )
     primary_type = SelectField(
             'Primary type',
-            choices= [(t, t) for t in models.TYPES])
+            choices= [('any', 'any')] + [(t, t) for t in models.TYPES])
