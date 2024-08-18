@@ -22,3 +22,4 @@
 ## Printing
 
 * [Make Playing Cards](https://www.makeplayingcards.com/)
+  * Card stock: S33 Superior smooth
