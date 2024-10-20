@@ -4,22 +4,6 @@ const canvas_width_px = 750;
 const canvas_height_px = 1050;
 
 
-function blobCallback(blob) {
-  var url = URL.createObjectURL(blob);
-  var link = document.createElement("a");
-  link.href = url;
-  link.download = "imag.png";
-  link.innerText = "Click to download";
-  document.body.appendChild(link);
-  document.querySelector('a').click();
-}
-
-function save() {
-  const canvas = document.getElementById('mycanvas');
-  const blob = canvas.toBlob(blobCallback)
-}
-
-
 async function render() {
     const canvas = document.getElementById('mycanvas');
     const ctx = canvas.getContext('2d');
@@ -28,10 +12,12 @@ async function render() {
     const img = new Image();
     img.src = "./ucard.png";
     img.onload = function() {
+        console.log("Drawing box.");
         var hRatio = canvas.width / img.width;
         var vRatio = canvas.height / img.height;
         var ratio  = Math.min ( hRatio, vRatio );
         ctx.drawImage(img, 0, 0);
+        console.log("Done.");
         // Title
         ctx.save();
         ctx.scale(1.1, 1);
@@ -68,31 +54,26 @@ async function render() {
 
 window.onload = function() {
     // Draw box around canvas
+    console.log("Drawing box...");
     const canvas = document.getElementById('mycanvas');
     const ctx = canvas.getContext('2d');
     ctx.strokeStyle = "#FF0000";
     ctx.strokeRect(0, 0, canvas.width, canvas.height);
+    console.log("Done.");
 
     // Load fonts
-    const myFont = new FontFace('goudy', 'url(fonts/GoudyMediaevalRegular.ttf)');
+    const myFont = new FontFace('goudy', 'url(./fonts/GoudyMediaevalRegular.ttf)');
     myFont.load().then(function(font) {
         document.fonts.add(font);
     });
-    const mplantin = new FontFace('mplantin', 'url(fonts/MPlantin.woff2)');
+
+    const mplantin = new FontFace('mplantin', 'url(./fonts/MPlantin.woff2)');
     mplantin.load().then(function(font) {
         document.fonts.add(font);
     });
-
     const button = document.createElement('button');
     button.onclick = render;
     button.innerText = "Render";
     document.body.appendChild(button);
-
-    const buttonSave = document.getElementById("save");
-    buttonSave.onclick = save;
-
-    // For debugging, render with canned title.
-    document.getElementById("title-entry").value = "Wall of Water";
-    render();
 }
 
