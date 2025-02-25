@@ -1,9 +1,0 @@
-{% extends "base.html" %}
-{% block content %}
-{% from 'macros.html' import show_card %}
-
-{% for card in cards %}
-  {{ show_card(card) }}<br><br>
-{% endfor %}
-
-{% endblock %}
