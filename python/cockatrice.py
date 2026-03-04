@@ -63,7 +63,7 @@ def export_cockatrice_xml(
         set_code: str,
         set_long_name: str,
         date_string: str,
-        ):
+) -> None:
     root = ET.Element("cockatrice_carddatabase", version="4")
     sets_element = ET.SubElement(root, "sets")
     sset = ET.SubElement(sets_element, "set")

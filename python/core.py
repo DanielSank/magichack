@@ -39,6 +39,7 @@ class Cost:
     B: int
     R: int
     G: int
+    D: int
     generic: Union[int, None]
     colorless: int
 
@@ -77,7 +78,7 @@ class Cost:
 
 
 
-COLORS = ("W", "U", "B", "R", "G")
+COLORS = ("W", "U", "B", "R", "G", "D")
 
 @dataclasses.dataclass
 class Card:
