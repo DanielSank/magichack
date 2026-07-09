@@ -25,7 +25,7 @@ def parse_gsheet_csv(filename: str, setcode: str) -> dict[str, Card]:
         reader = csv.reader(file)
         _ = next(reader)  # Skip the header
         for row in reader:
-            rarity, legendary, ttype, _, subtype, cclass, p, t, cost, rules, name, flavor, image, *rest = tuple(row)
+            rarity, legendary, ttype, _, subtypes, classes, p, t, cost, rules, name, image, flavor, *rest = tuple(row)
             if name == "":  # Skip empty sheet rows
                 continue
             cards[name] = Card(
@@ -33,8 +33,8 @@ def parse_gsheet_csv(filename: str, setcode: str) -> dict[str, Card]:
                     rarity=Rarity.from_string(rarity),
                     legendary=True if legendary == "TRUE" else False,
                     types=[ttype],
-                    subtypes=subtype.split(" "),
-                    classes=cclass.split(" "),
+                    subtypes=subtype.split("\n"),
+                    classes=classes.split("\n"),
                     power=parse_pt(p),
                     toughness=parse_pt(t),
                     cost=Cost.from_str(cost),
@@ -45,10 +45,15 @@ def parse_gsheet_csv(filename: str, setcode: str) -> dict[str, Card]:
     return cards
 
 
-def all_cards():
+def all_cards(set_tag: str) -> dict[str, Card]:
+    """
+    Args:
+        set_tag: The three letter abbreviation for the set, e.g. "LEA"
+             for "Limited Edition Alpha".
+    """
     files = [f for f in os.listdir(".") if os.path.isfile(f)]
     files = [f for f in files if f.endswith("csv")]
     cards: dict[str, Card] = {}
     for file in files:
-        cards.update(parse_gsheet_csv(file, "LEY"))
+        cards.update(parse_gsheet_csv(file, set_tag))
     return cards
