@@ -1,3 +1,5 @@
+from dataclasses import dataclass
+
 import os.path
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -8,6 +10,17 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.json.
 # 'metadata.readonly' allows us to see file names and IDs without accessing file contents
 SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly']
+
+
+def download_url(drive_id: str) -> str:
+    """Direct download URL for Google Drive file"""
+    return f"https://drive.google.com/uc?export=download&id={drive_id}"
+
+
+@dataclass(eq=True, frozen=True)
+class File:
+    drive_id: str
+    name: str
 
 
 def get_drive_service():
@@ -32,20 +45,19 @@ def get_drive_service():
     return build('drive', 'v3', credentials=creds)
 
 
-def list_files_in_folder(folder_id):
-    """Lists every single file inside a specific Google Drive folder using pagination."""
+def list_files_in_folder(folder_id: str) -> set[File]:
+    """Lists files in a Google Drive folder.
+
+    Args:
+        folder_id: Get files from this folder.
+
+    Returns a set of Files.
+    """
+    files: set[File] = set()
     try:
         service = get_drive_service()
-
         query = f"'{folder_id}' in parents and trashed = false"
-        print(f"Fetching all files from folder ID: {folder_id}...\n")
-        
-        # Print the header
-        print(f"{'File Name':<40} | {'File ID'}")
-        print("-" * 80)
-        
         page_token = None
-        total_files = 0
 
         while True:
             # We pass the page_token to this call. On the first loop, it's None.
@@ -55,24 +67,20 @@ def list_files_in_folder(folder_id):
                 pageSize=100,  # Grab 100 at a time
                 pageToken=page_token
             ).execute()
-            
-            files = results.get('files', [])
-            
-            for file in files:
-                is_folder = " [FOLDER]" if file['mimeType'] == 'application/vnd.google-apps.folder' else ""
-                print(f"{file['name'] + is_folder:<40} | {file['id']}")
-                total_files += 1
 
-            # Check if there is another page of data
-            page_token = results.get('nextPageToken', None)
-            
-            # If there's no nextPageToken, we've reached the end
+            for file in results.get("files", []):
+                if file["mimeType"] == "application/vnd.google-apps.folder":
+                    print(f'Skipping folder {file["name"]}.')
+                    continue
+                files.add(File(name=file["name"], drive_id=file["id"]))
+
+            # Check if there is another page of data, and if not, we're done.
+            page_token = results.get("nextPageToken", None)
             if not page_token:
                 break
 
-        print("-" * 80)
-        print(f"Done! Found a total of {total_files} files.")
-
     except HttpError as error:
         print(f"An error occurred: {error}")
+
+    return files
 
