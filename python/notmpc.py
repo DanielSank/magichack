@@ -1,3 +1,9 @@
+"""Tools for placing print orders.
+
+Usual workflow would be to first get a set of core.Card,
+then copy those into a list of this module's Card,
+then use the xml() function to make an XML file for ordering.
+"""
 import dataclasses
 from typing import Callable
 import xml.etree.ElementTree as ET
