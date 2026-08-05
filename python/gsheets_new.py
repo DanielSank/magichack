@@ -1,10 +1,14 @@
 import os
 import csv
+
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+
+import core
+from core import Rarity, Cost
 
 
 # If modifying these scopes, delete the file token.json.
@@ -14,7 +18,7 @@ SCOPES = [
 ]
 
 
-def get_google_sheet_data(spreadsheet_id: str, range_name: str) -> list[list[str]] | None:
+def get_gsheet_rows(spreadsheet_id: str, range_name: str) -> list[list[str]] | None:
     """Fetch Google Sheets data.
 
     Args:
@@ -57,3 +61,55 @@ def get_google_sheet_data(spreadsheet_id: str, range_name: str) -> list[list[str
     except HttpError as err:
         print(f"An API error occurred: {err}")
         return None
+
+
+def parse_pt(pt: str) -> int | str | None:
+    if pt == "":
+        return None
+    else:
+        try:
+            return int(pt)
+        except ValueError:
+            return pt
+
+
+def parse_gsheet_rows(
+        rows: list[list[str]],
+        setcode: str,
+) -> list[core.Card]:
+    # Format the gsheet rows a bit before creating Cards.
+    column_names = rows[0]
+    formatted: list[dict[str, str | list[str]]] = []
+    for row in rows[1:]:
+        d: dict[str, str] = {}
+        types: list[str] = []
+        for name, val in zip(column_names, row):
+            if name == "Type":
+                if val:
+                    types.append(val)
+            else:
+                d[name] = val
+        d["Type"] = "\n".join(types)
+        formatted.append(d)
+
+    cards: list[core.Card] = []
+    for row in formatted:
+        cards.append(
+                core.Card(
+                    sset=setcode,
+                    rarity=Rarity.from_string(row["Rarity"]),
+                    legendary=True if row["Legendary"] == "TRUE" else False,
+                    types=tuple(row["Type"].split("\n")),
+                    subtypes=tuple(row["Subtypes"].split("\n")),
+                    classes=tuple(row["Classes"].split("\n")),
+                    power=parse_pt(row["P"]),
+                    toughness=parse_pt(row["T"]),
+                    cost=Cost.from_str(row["Cost"]),
+                    rules=tuple(row["Rules"].split("\n")),
+                    name=row["Name"],
+                    flavor=row.get("Flavor", ""),
+                    image_url=row["Image"] if row.get("Image", None) else None,
+                )
+        )
+    return cards
+
