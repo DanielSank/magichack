@@ -27,7 +27,7 @@ def card_to_xml_element(card: core.Card, render_url: str) -> ET.Element:
     """
     root = ET.Element("card")
     name = ET.SubElement(root, "name")
-    name.text = card.name.replace("'", "")
+    name.text = card.name
     text = ET.SubElement(root, "text")
     text.text = "\n".join(card.expand_rules())
     prop = ET.SubElement(root, "prop")
@@ -79,7 +79,11 @@ def export_cockatrice_xml(
 
     cards_element = ET.SubElement(root, "cards")
     for card in cards:
-        cards_element.append(card_to_xml_element(card, renders.get(f"{card.name}.png", None)))
+        name_for_url = card.name.replace("'", "").replace("!", "").replace(",", "")
+        url = renders.get(f"{name_for_url}.png", None)
+        if url is None:
+            print(f"{name_for_url}.png image file not found.")
+        cards_element.append(card_to_xml_element(card, url))
     tree = ET.ElementTree(root)
     ET.indent(tree, space="  ", level=0)
     with open(set_filename, mode="wb") as file:
