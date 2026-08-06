@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from typing import Union
 import dataclasses
 import enum
 import re
@@ -40,7 +39,7 @@ class Cost:
     R: int
     G: int
     D: int
-    generic: Union[int, None]
+    generic: int | None
     colorless: int
 
     def as_str(self) -> str:
@@ -55,7 +54,12 @@ class Cost:
     def from_str(cls, s: str) -> Cost:
         maybe_result = re_cost.fullmatch(s)
         if maybe_result is None:
-            raise ValueError
+            colored = {"W": 0, "U": 0, "B": 0, "R": 0, "G": 0, "D": 0}
+            return cls(
+                    generic=None,
+                    colorless=0,
+                    **colored,
+            )
         if (value := maybe_result.group("generic")) != "":
             generic = int(value)
         else:
@@ -90,8 +94,8 @@ class Card:
     types: tuple[str, ...]
     subtypes: tuple[str, ...]
     classes: tuple[str, ...]
-    power: Union[int, str, None]
-    toughness: Union[int, str, None]
+    power: int | str | None
+    toughness: int | str | None
     cost: Cost
     rules: tuple[str, ...]
     name: str

@@ -94,6 +94,8 @@ def parse_gsheet_rows(
 
     cards: list[core.Card] = []
     for row in formatted:
+        if row.get("Name", "") == "":
+            continue
         cards.append(
                 core.Card(
                     sset=setcode,

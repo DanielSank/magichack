@@ -17,7 +17,7 @@ def type_to_tablerow(ttype: str) -> int:
 root = ET.Element("cockatrice_carddatabase", version="4")
 
 
-def card_to_xml_element(card: core.Card) -> ET.Element:
+def card_to_xml_element(card: core.Card, render_url: str) -> ET.Element:
     """Convert one Card to a single XML element.
 
     Args:
@@ -27,9 +27,9 @@ def card_to_xml_element(card: core.Card) -> ET.Element:
     """
     root = ET.Element("card")
     name = ET.SubElement(root, "name")
-    name.text = card.name
+    name.text = card.name.replace("'", "")
     text = ET.SubElement(root, "text")
-    text.text = "\n".join(card.rules)
+    text.text = "\n".join(card.expand_rules())
     prop = ET.SubElement(root, "prop")
     layout = ET.SubElement(prop, "layout")
     layout.text = "normal"
@@ -50,7 +50,7 @@ def card_to_xml_element(card: core.Card) -> ET.Element:
     if card.power is not None and card.toughness is not None:
         pt = ET.SubElement(prop, "pt")
         pt.text = "/".join((str(card.power), str(card.toughness)))
-    sset = ET.SubElement(root, "set", rarity=card.rarity.long_name())
+    sset = ET.SubElement(root, "set", picURL=render_url if render_url is not None else "", rarity=card.rarity.long_name())
     sset.text = card.sset
     tablerow = ET.SubElement(root, "tablerow")
     tablerow.text = str(type_to_tablerow(maintype.text))
@@ -59,6 +59,7 @@ def card_to_xml_element(card: core.Card) -> ET.Element:
 
 def export_cockatrice_xml(
         cards: list[core.Card],
+        renders: dict[str, str],  # name -> URL
         set_filename: str,
         set_code: str,
         set_long_name: str,
@@ -78,7 +79,7 @@ def export_cockatrice_xml(
 
     cards_element = ET.SubElement(root, "cards")
     for card in cards:
-        cards_element.append(card_to_xml_element(card))
+        cards_element.append(card_to_xml_element(card, renders.get(f"{card.name}.png", None)))
     tree = ET.ElementTree(root)
     ET.indent(tree, space="  ", level=0)
     with open(set_filename, mode="wb") as file:
