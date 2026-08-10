@@ -36,9 +36,9 @@ def card_to_xml_element(card: core.Card, render_url: str) -> ET.Element:
     side = ET.SubElement(prop, "side")
     side.text = "front"
     ttype = ET.SubElement(prop, "type")
-    ttype.text = " ".join(t.lower() for t in card.types)
+    ttype.text = " ".join(t.lower().capitalize() for t in card.types)
     maintype = ET.SubElement(prop, "maintype")
-    maintype.text = card.types[0].lower()
+    maintype.text = card.types[0].lower().capitalize()
     manacost = ET.SubElement(prop, "manacost")
     manacost.text = card.cost.as_str()
     cmc = ET.SubElement(prop, "cmc")
