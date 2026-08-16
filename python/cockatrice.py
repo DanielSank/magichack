@@ -53,7 +53,7 @@ def card_to_xml_element(card: core.Card, render_url: str) -> ET.Element:
     sset = ET.SubElement(root, "set", picURL=render_url if render_url is not None else "", rarity=card.rarity.long_name())
     sset.text = card.sset
     tablerow = ET.SubElement(root, "tablerow")
-    tablerow.text = str(type_to_tablerow(maintype.text))
+    tablerow.text = str(type_to_tablerow(maintype.text.lower()))
     return root
 
 
@@ -83,8 +83,9 @@ def export_cockatrice_xml(
         url = renders.get(f"{name_for_url}.png", None)
         if url is None:
             print(f"{name_for_url}.png image file not found.")
-        cards_element.append(card_to_xml_element(card, url))
+        else:
+            cards_element.append(card_to_xml_element(card, url))
     tree = ET.ElementTree(root)
     ET.indent(tree, space="  ", level=0)
-    with open(set_filename, mode="wb") as file:
+    with open("/home/daniel/.local/share/Cockatrice/Cockatrice/customsets/{set_filename}", mode="wb") as file:
         tree.write(file, encoding="utf-8", xml_declaration=True)

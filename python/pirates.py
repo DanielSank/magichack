@@ -30,6 +30,8 @@ def main(date_string: str) -> None:
                 spreadsheet_id=SHEET_ID,
                 range_name=f"{sheet}!A1:M",
         )
+        if rows is None:
+            raise ValueError
         print(f"Found {len(rows)} rows in sheet {sheet}.")
         cards.extend(
                 gsn.parse_gsheet_rows(
