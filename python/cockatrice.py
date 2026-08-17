@@ -87,5 +87,5 @@ def export_cockatrice_xml(
             cards_element.append(card_to_xml_element(card, url))
     tree = ET.ElementTree(root)
     ET.indent(tree, space="  ", level=0)
-    with open("/home/daniel/.local/share/Cockatrice/Cockatrice/customsets/{set_filename}", mode="wb") as file:
+    with open(f"/home/daniel/.local/share/Cockatrice/Cockatrice/customsets/01.{set_filename}", mode="wb") as file:
         tree.write(file, encoding="utf-8", xml_declaration=True)
