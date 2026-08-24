@@ -48,3 +48,37 @@ def main(date_string: str) -> None:
             set_long_name="Treasures of Kao Sora",
             date_string=date_string,
     )
+
+
+def all_csv() -> list[str]:
+    cards: list[core.Card] = []
+    for sheet in SHEETS:
+        rows = gsn.get_gsheet_rows(
+                spreadsheet_id=SHEET_ID,
+                range_name=f"{sheet}!A1:M",
+        )
+        if rows is None:
+            raise ValueError
+        print(f"Found {len(rows)} rows in sheet {sheet}.")
+        cards.extend(
+                gsn.parse_gsheet_rows(
+                    rows=rows,
+                    setcode="TOKS",
+                ),
+        )
+    lines: list[str] = []
+    for card in cards:
+        lines.append(",".join(
+            (
+                card.name,
+                card.rarity.value,
+                " ".join(card.types),
+                " ".join(card.subtypes),
+                " ".join(card.classes),
+                str(card.power),
+                str(card.toughness),
+                str(card.cost),
+                " ".join(card.expand_rules()),
+            )
+        ))
+    return lines
