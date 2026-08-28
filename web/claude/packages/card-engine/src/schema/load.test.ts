@@ -36,7 +36,7 @@ fields:
     expect(schema.id).toBe("mtg");
     expect(schema.defaultStyleId).toBe("mtg-classic");
     expect(schema.fields.map((f) => f.key)).toEqual(
-      expect.arrayContaining(["name", "cost", "types", "rulesText", "power", "toughness", "flavor", "art"]),
+      expect.arrayContaining(["name", "cost", "types", "rules", "power", "toughness", "flavor", "art"]),
     );
   });
 

@@ -26,10 +26,10 @@ fields:
     required: true
     # One entry per effect/type the card has, e.g. ["Creature", "Dragon"].
 
-  - key: rulesText
-    type: text
+  - key: rules
+    type: stringList
     label: "Rules Text"
-    maxLength: 1000
+    # One entry per effect the card has, e.g. ["Flying.", "{T}: Deal 1 damage to any target."].
 
   - key: power
     type: string

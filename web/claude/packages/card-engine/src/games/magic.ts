@@ -4,7 +4,7 @@ export interface Card {
   name: string;
   cost?: string;
   types: string[];
-  rulesText?: string;
+  rules?: string[];
   power?: string;
   toughness?: string;
   flavor?: string;

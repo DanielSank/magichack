@@ -10,7 +10,7 @@ const SAMPLE_CARD: CardData = {
     name: "Ember Hatchling",
     cost: "{1}{R}{R}",
     types: ["Creature", "Dragon"],
-    rulesText: "Flying. {T}: Deal 1 damage to any target.",
+    rules: ["Flying.", "{T}: Deal 1 damage to any target."],
     power: "2",
     toughness: "2",
     flavor: "It hatched already breathing fire.",

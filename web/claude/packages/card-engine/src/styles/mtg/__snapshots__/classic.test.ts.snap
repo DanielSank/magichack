@@ -106,7 +106,8 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
       "content": [
         {
           "kind": "text",
-          "text": "Flying. ",
+          "text": "Flying.
+",
         },
         {
           "kind": "symbol",

@@ -19,7 +19,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
   const name = fields.name;
   const cost = fields.cost ?? "";
   const typeLine = fields.types.join(", ");
-  const rulesText = fields.rulesText ?? "";
+  const rulesText = (fields.rules ?? []).join("\n");
   const power = fields.power ?? "";
   const toughness = fields.toughness ?? "";
   const flavor = fields.flavor ?? "";
