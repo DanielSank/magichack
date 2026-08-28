@@ -1,0 +1,21 @@
+node_modules/
+dist/
+build/
+*.tsbuildinfo
+.env
+.env.local
+coverage/
+
+# Python
+apps/server/.venv/
+apps/server/__pycache__/
+**/__pycache__/
+*.pyc
+
+# Editor/OS
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# Scratch output from demo scripts
+*.local.svg

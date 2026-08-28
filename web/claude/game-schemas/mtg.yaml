@@ -1,0 +1,51 @@
+# Game schema for Magic: The Gathering-style cards.
+#
+# This file is the single source of truth for what fields an "mtg" card has.
+# It is loaded independently by the TypeScript frontend/card-engine (js-yaml)
+# and the Python backend (PyYAML) — do not duplicate this field list in code.
+id: mtg
+name: "Magic: The Gathering style"
+defaultStyleId: mtg-classic
+fields:
+  - key: name
+    type: string
+    label: "Name"
+    required: true
+    maxLength: 80
+
+  - key: cost
+    type: string
+    label: "Mana Cost"
+    # Sequence of brace-delimited symbol tokens, e.g. "{2}{R}{R}".
+    # Tokens are resolved to inline icons by the symbol registry at render time.
+    pattern: "^(\\{[0-9WUBRGXC]+\\})*$"
+
+  - key: types
+    type: stringList
+    label: "Types"
+    required: true
+    # One entry per effect/type the card has, e.g. ["Creature", "Dragon"].
+
+  - key: rulesText
+    type: text
+    label: "Rules Text"
+    maxLength: 1000
+
+  - key: power
+    type: string
+    label: "Power"
+    maxLength: 8
+
+  - key: toughness
+    type: string
+    label: "Toughness"
+    maxLength: 8
+
+  - key: flavor
+    type: text
+    label: "Flavor Text"
+    maxLength: 500
+
+  - key: art
+    type: image
+    label: "Art"

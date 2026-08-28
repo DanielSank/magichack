@@ -1,0 +1,93 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`renderPlayingCardClassic > matches its serialized SVG snapshot for canonical sample cards (visual-regression net) > queen-of-spades 1`] = `
+"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 1050" width="750" height="1050">
+<rect x="0" y="0" width="750" height="1050" fill="#fdfaf3"/>
+<rect x="18" y="18" width="714" height="1014" rx="28" fill="none" stroke="#333333" stroke-width="3"/>
+<g>
+<text x="44" y="74.6" font-family="Georgia, serif" font-size="36" fill="#1a1a1a" font-weight="bold">Q</text>
+</g>
+<g>
+<svg x="44" y="90.4" width="48" height="48" viewBox="0 0 100 100">
+  <path d="M50 10 C90 40 95 65 75 80 C62 90 50 80 50 68 C50 80 38 90 25 80 C5 65 10 40 50 10 Z" fill="#1a1a1a"/>
+  <polygon points="42,72 58,72 66,92 34,92" fill="#1a1a1a"/>
+</svg>
+</g>
+<g transform="rotate(180 676 984)">
+<text x="683.68" y="992.6" font-family="Georgia, serif" font-size="36" fill="#1a1a1a" font-weight="bold">Q</text>
+</g>
+<g transform="rotate(180 682 938)">
+<svg x="658" y="916.4" width="48" height="48" viewBox="0 0 100 100">
+  <path d="M50 10 C90 40 95 65 75 80 C62 90 50 80 50 68 C50 80 38 90 25 80 C5 65 10 40 50 10 Z" fill="#1a1a1a"/>
+  <polygon points="42,72 58,72 66,92 34,92" fill="#1a1a1a"/>
+</svg>
+</g>
+<g>
+<svg x="255" y="387" width="240" height="240" viewBox="0 0 100 100">
+  <path d="M50 10 C90 40 95 65 75 80 C62 90 50 80 50 68 C50 80 38 90 25 80 C5 65 10 40 50 10 Z" fill="#1a1a1a"/>
+  <polygon points="42,72 58,72 66,92 34,92" fill="#1a1a1a"/>
+</svg>
+</g>
+<g>
+<text x="337.8" y="735" font-family="Georgia, serif" font-size="120" fill="#1a1a1a" font-weight="bold">Q</text>
+</g>
+</svg>"
+`;
+
+exports[`renderPlayingCardClassic > matches its serialized SVG snapshot for canonical sample cards (visual-regression net) > seven-of-hearts 1`] = `
+"<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 750 1050" width="750" height="1050">
+<rect x="0" y="0" width="750" height="1050" fill="#fdfaf3"/>
+<rect x="18" y="18" width="714" height="1014" rx="28" fill="none" stroke="#333333" stroke-width="3"/>
+<g>
+<text x="44" y="74.6" font-family="Georgia, serif" font-size="36" fill="#c0392b" font-weight="bold">7</text>
+</g>
+<g>
+<svg x="44" y="90.4" width="48" height="48" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g transform="rotate(180 676 984)">
+<text x="683.68" y="992.6" font-family="Georgia, serif" font-size="36" fill="#c0392b" font-weight="bold">7</text>
+</g>
+<g transform="rotate(180 682 938)">
+<svg x="658" y="916.4" width="48" height="48" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g>
+<svg x="183" y="193.2" width="84" height="84" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g>
+<svg x="483" y="193.2" width="84" height="84" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g>
+<svg x="333" y="319.2" width="84" height="84" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g>
+<svg x="183" y="487.2" width="84" height="84" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g>
+<svg x="483" y="487.2" width="84" height="84" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g transform="rotate(180 225 819)">
+<svg x="183" y="781.1999999999999" width="84" height="84" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+<g transform="rotate(180 525 819)">
+<svg x="483" y="781.1999999999999" width="84" height="84" viewBox="0 0 100 100">
+  <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
+</svg>
+</g>
+</svg>"
+`;

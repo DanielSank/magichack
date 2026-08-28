@@ -1,0 +1,21 @@
+# Game schema for standard playing cards - the simplest supported game,
+id: playing-cards
+name: "Standard Playing Card"
+defaultStyleId: playing-cards-classic
+fields:
+  - key: suit
+    type: enum
+    label: "Suit"
+    required: true
+    values: ["hearts", "diamonds", "clubs", "spades"]
+
+  - key: rank
+    type: enum
+    label: "Rank"
+    required: true
+    values: ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"]
+
+  - key: art
+    type: image
+    label: "Custom Art"
+    # Optional — replaces the default pip layout with custom art if provided.
