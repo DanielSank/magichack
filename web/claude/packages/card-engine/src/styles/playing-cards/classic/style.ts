@@ -4,8 +4,8 @@ import type {
   RenderContext,
   RenderTree,
   TextRun,
-} from "../../render-tree/types.js";
-import { pipLayoutForRank } from "../shared/pipLayout.js";
+} from "../../../render-tree/types.js";
+import { pipLayoutForRank } from "../../shared/pipLayout.js";
 
 const CARD_WIDTH = 750;
 const CARD_HEIGHT = 1050;
@@ -43,9 +43,8 @@ export function renderPlayingCardClassic(card: PlayingCardsCardData, _context: R
 
   const boxes: RenderBox[] = [
     {
-      kind: "shape",
+      kind: "rect",
       id: "frame",
-      shape: "rect",
       x: MARGIN / 2,
       y: MARGIN / 2,
       width: CARD_WIDTH - MARGIN,

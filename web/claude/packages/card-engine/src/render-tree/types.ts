@@ -73,17 +73,35 @@ export interface ImageBox extends BaseBox {
   fit?: "cover" | "contain" | "fill";
 }
 
-export interface ShapeBox extends BaseBox {
-  kind: "shape";
-  shape: "rect" | "ellipse";
+export interface RectBox extends BaseBox {
+  kind: "rect";
   fill?: string;
   stroke?: string;
   strokeWidth?: number;
-  /** "rect" only. */
   cornerRadius?: number;
 }
 
-export type RenderBox = TextBox | ImageBox | ShapeBox;
+export interface EllipseBox extends BaseBox {
+  kind: "ellipse";
+  fill?: string;
+  stroke?: string;
+  strokeWidth?: number;
+}
+
+/**
+ * A box whose content is a bundled SVG asset shipped with the package (e.g.
+ * a style's decorative background/texture) — not user-uploaded content, so
+ * unlike ImageBox it's not an AssetRef. Resolved and inlined the same way
+ * inline symbols are (see ToSvgOptions.resolveSymbolSvg in render/toSvgString.ts):
+ * a style names an asset path, and the actual file bytes are read at the
+ * edge, keeping card-engine itself free of file I/O.
+ */
+export interface SvgAssetBox extends BaseBox {
+  kind: "svgAsset";
+  svgAssetPath: string;
+}
+
+export type RenderBox = TextBox | ImageBox | RectBox | EllipseBox | SvgAssetBox;
 
 /**
  * The declarative output of a style's render() function: a set of

@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { toSvgString } from "../../render/toSvgString.js";
-import type { CardData } from "../../render-tree/types.js";
-import { resolveSymbolSvgForTests } from "../../testUtils/resolveSymbolSvg.js";
-import { renderPlayingCardClassic } from "./classic.js";
+import { toSvgString } from "../../../render/toSvgString.js";
+import type { CardData } from "../../../render-tree/types.js";
+import { resolveSymbolSvgForTests } from "../../../testUtils/resolveSymbolSvg.js";
+import { renderPlayingCardClassic } from "./style.js";
 
 const SEVEN_OF_HEARTS: CardData = { gameId: "playing-cards", fields: { suit: "hearts", rank: "7" } };
 const QUEEN_OF_SPADES: CardData = { gameId: "playing-cards", fields: { suit: "spades", rank: "Q" } };

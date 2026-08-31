@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { ImageBox, RenderTree, ShapeBox, TextBox } from "../render-tree/types.js";
+import type { EllipseBox, ImageBox, RectBox, RenderTree, TextBox } from "../render-tree/types.js";
 import { toSvgString } from "./toSvgString.js";
 
 const stubResolveSymbolSvg = (path: string) => `<svg viewBox="0 0 100 100"><!-- ${path} --></svg>`;
@@ -24,10 +24,9 @@ describe("toSvgString", () => {
   });
 
   it("renders a shape box (rect and ellipse)", () => {
-    const rect: ShapeBox = {
-      kind: "shape",
+    const rect: RectBox = {
+      kind: "rect",
       id: "r",
-      shape: "rect",
       x: 10,
       y: 20,
       width: 30,
@@ -35,10 +34,9 @@ describe("toSvgString", () => {
       fill: "#123456",
       cornerRadius: 5,
     };
-    const ellipse: ShapeBox = {
-      kind: "shape",
+    const ellipse: EllipseBox = {
+      kind: "ellipse",
       id: "e",
-      shape: "ellipse",
       x: 0,
       y: 0,
       width: 100,
@@ -185,10 +183,9 @@ describe("toSvgString", () => {
   });
 
   it("paints lower zIndex boxes before higher zIndex boxes", () => {
-    const back: ShapeBox = {
-      kind: "shape",
+    const back: RectBox = {
+      kind: "rect",
       id: "back",
-      shape: "rect",
       x: 0,
       y: 0,
       width: 10,
@@ -196,10 +193,9 @@ describe("toSvgString", () => {
       fill: "#111111",
       zIndex: 0,
     };
-    const front: ShapeBox = {
-      kind: "shape",
+    const front: RectBox = {
+      kind: "rect",
       id: "front",
-      shape: "rect",
       x: 0,
       y: 0,
       width: 10,

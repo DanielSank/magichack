@@ -1,20 +1,21 @@
-import type { MtgCardData, RenderBox, RenderContext, RenderTree } from "../../render-tree/types.js";
-import { parseInlineSymbols } from "../../symbols/parseInlineSymbols.js";
+import type { MtgCardData, RenderBox, RenderContext, RenderTree } from "../../../render-tree/types.js";
+import { parseInlineSymbols } from "../../../symbols/parseInlineSymbols.js";
 
 const CARD_WIDTH = 750;
 const CARD_HEIGHT = 1050;
 const MARGIN = 36;
-const FRAME_COLOR = "#2b2210";
-const INK_COLOR = "#1a1408";
+const FRAME_COLOR = "#7a6a3f";
+const INK_COLOR = "#241d0d";
 const MUTED_INK = "#4a3d22";
-const TYPE_BAR_FILL = "#ded0ab";
+const TYPE_BAR_FILL = "#e9dcb8";
 
 /**
- * The one built-in style for the "mtg" game. Exercises the inline-symbol
- * pipeline via the mana cost field (and would via rules text symbols like
- * {T}, if present) — see plan M1.
+ * A second MTG style, sharing renderMtgClassic's layout but demonstrating
+ * SvgAssetBox: a package-bundled decorative texture (background.svg, right
+ * next to this file — a style's own assets, not shared via the symbol
+ * registry) painted full-bleed behind everything else.
  */
-export function renderMtgClassic(card: MtgCardData, context: RenderContext): RenderTree {
+export function renderMtgHoloFoil(card: MtgCardData, context: RenderContext): RenderTree {
   const fields = card.fields;
   const name = fields.name;
   const cost = fields.cost ?? "";
@@ -27,9 +28,18 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
 
   const boxes: RenderBox[] = [
     {
-      kind: "shape",
+      kind: "svgAsset",
+      id: "foil-background",
+      svgAssetPath: "src/styles/mtg/holoFoil/background.svg",
+      x: 0,
+      y: 0,
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
+      zIndex: -1,
+    },
+    {
+      kind: "rect",
       id: "frame",
-      shape: "rect",
       x: MARGIN / 2,
       y: MARGIN / 2,
       width: CARD_WIDTH - MARGIN,
@@ -70,9 +80,8 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       zIndex: 2,
     },
     {
-      kind: "shape",
+      kind: "rect",
       id: "type-line-bg",
-      shape: "rect",
       x: MARGIN,
       y: MARGIN + 500,
       width: CARD_WIDTH - MARGIN * 2,
@@ -179,7 +188,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
   return {
     width: CARD_WIDTH,
     height: CARD_HEIGHT,
-    background: { fill: "#f2e9d8" },
+    background: { fill: "#f4ecd8" },
     boxes,
   };
 }

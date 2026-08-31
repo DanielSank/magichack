@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
-import { toSvgString } from "../../render/toSvgString.js";
-import type { CardData, RenderContext } from "../../render-tree/types.js";
-import { resolveSymbolSvgForTests } from "../../testUtils/resolveSymbolSvg.js";
-import { renderMtgClassic } from "./classic.js";
+import { toSvgString } from "../../../render/toSvgString.js";
+import type { CardData, RenderContext } from "../../../render-tree/types.js";
+import { resolveSymbolSvgForTests } from "../../../testUtils/resolveSymbolSvg.js";
+import { renderMtgClassic } from "./style.js";
 
 const SAMPLE_CARD: CardData = {
   gameId: "mtg",

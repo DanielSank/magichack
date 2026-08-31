@@ -1,5 +1,6 @@
-import { renderMtgClassic } from "./styles/mtg/classic.js";
-import { renderPlayingCardClassic } from "./styles/playing-cards/classic.js";
+import { renderMtgClassic } from "./styles/mtg/classic/style.js";
+import { renderMtgHoloFoil } from "./styles/mtg/holoFoil/style.js";
+import { renderPlayingCardClassic } from "./styles/playing-cards/classic/style.js";
 import { toRegistryStyle } from "./styles/types.js";
 import type { StyleDef } from "./styles/types.js";
 
@@ -11,6 +12,7 @@ import type { StyleDef } from "./styles/types.js";
  */
 export const STYLE_REGISTRY: StyleDef[] = [
   toRegistryStyle({ id: "mtg-classic", gameId: "mtg", displayName: "Classic", render: renderMtgClassic }),
+  toRegistryStyle({ id: "mtg-holo-foil", gameId: "mtg", displayName: "Holo Foil", render: renderMtgHoloFoil }),
   toRegistryStyle({
     id: "playing-cards-classic",
     gameId: "playing-cards",

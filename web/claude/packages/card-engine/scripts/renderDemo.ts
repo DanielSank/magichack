@@ -76,6 +76,13 @@ const mtgCard: CardData = {
   },
 };
 renderAndSave("mtg", "mtg-classic", mtgCard, { positionInSet: 7, setSize: 249 }, "mtg-demo.local.svg");
+renderAndSave(
+  "mtg",
+  "mtg-holo-foil",
+  mtgCard,
+  { positionInSet: 7, setSize: 249 },
+  "mtg-holo-foil-demo.local.svg",
+);
 
 // Playing-card samples — prove the abstraction isn't MTG-specific: one
 // numeric rank (pip grid) and one face card (large glyph fallback).

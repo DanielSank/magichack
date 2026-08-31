@@ -1,9 +1,11 @@
 import type {
+  EllipseBox,
   HorizontalAlign,
   ImageBox,
+  RectBox,
   RenderBox,
   RenderTree,
-  ShapeBox,
+  SvgAssetBox,
   TextBox,
   TextRun,
   VerticalAlign,
@@ -74,27 +76,41 @@ function renderBox(
     ? ` transform="rotate(${box.rotationDeg} ${box.x + box.width / 2} ${box.y + box.height / 2})"`
     : "";
   switch (box.kind) {
-    case "shape":
-      return renderShapeBox(box, transform);
+    case "rect":
+      return renderRectBox(box, transform);
+    case "ellipse":
+      return renderEllipseBox(box, transform);
     case "image":
       return renderImageBox(box, transform);
     case "text":
       return renderTextBox(box, measureText, resolveSymbolSvg, transform);
+    case "svgAsset":
+      return renderSvgAssetBox(box, resolveSymbolSvg, transform);
   }
 }
 
-function renderShapeBox(box: ShapeBox, transform: string): string {
+function renderSvgAssetBox(box: SvgAssetBox, resolveSymbolSvg: (path: string) => string, transform: string): string {
+  const inner = stripOuterSvgTag(resolveSymbolSvg(box.svgAssetPath));
+  return `<svg x="${box.x}" y="${box.y}" width="${box.width}" height="${box.height}" viewBox="0 0 100 100" preserveAspectRatio="none"${transform}>${inner}</svg>`;
+}
+
+function renderRectBox(box: RectBox, transform: string): string {
   const fill = box.fill ? ` fill="${escapeAttr(box.fill)}"` : ' fill="none"';
   const stroke = box.stroke
     ? ` stroke="${escapeAttr(box.stroke)}" stroke-width="${box.strokeWidth ?? 1}"`
     : "";
-  if (box.shape === "ellipse") {
-    const rx = box.width / 2;
-    const ry = box.height / 2;
-    return `<ellipse cx="${box.x + rx}" cy="${box.y + ry}" rx="${rx}" ry="${ry}"${fill}${stroke}${transform}/>`;
-  }
   const rxAttr = box.cornerRadius ? ` rx="${box.cornerRadius}"` : "";
   return `<rect x="${box.x}" y="${box.y}" width="${box.width}" height="${box.height}"${rxAttr}${fill}${stroke}${transform}/>`;
+}
+
+function renderEllipseBox(box: EllipseBox, transform: string): string {
+  const fill = box.fill ? ` fill="${escapeAttr(box.fill)}"` : ' fill="none"';
+  const stroke = box.stroke
+    ? ` stroke="${escapeAttr(box.stroke)}" stroke-width="${box.strokeWidth ?? 1}"`
+    : "";
+  const rx = box.width / 2;
+  const ry = box.height / 2;
+  return `<ellipse cx="${box.x + rx}" cy="${box.y + ry}" rx="${rx}" ry="${ry}"${fill}${stroke}${transform}/>`;
 }
 
 function renderImageBox(box: ImageBox, transform: string): string {
