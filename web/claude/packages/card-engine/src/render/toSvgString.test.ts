@@ -75,7 +75,7 @@ describe("toSvgString", () => {
       height: 30,
       content: [{ kind: "text", text: "Hello" }],
       fontFamily: "sans-serif",
-      fontSize: 16,
+      fontFit: 16,
       color: "#000",
     };
     const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
@@ -93,7 +93,7 @@ describe("toSvgString", () => {
       height: 200,
       content: [{ kind: "text", text: "one two three four" }],
       fontFamily: "sans-serif",
-      fontSize: 16,
+      fontFit: 16,
       color: "#000",
     };
     // Fixed-width measurer so wrapping is deterministic: each word is wider
@@ -119,7 +119,7 @@ describe("toSvgString", () => {
       content: [{ kind: "text", text: "Some rules text" }],
       fontFamily: "sans-serif",
       color: "#000",
-      autoFit: { minSize: 8, maxSize: 40 },
+      fontFit: { minSize: 8, maxSize: 40 },
     };
     const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
     expect(svg).toContain('font-size="8"');
@@ -136,7 +136,7 @@ describe("toSvgString", () => {
       content: [{ kind: "text", text: "Some rules text" }],
       fontFamily: "sans-serif",
       color: "#000",
-      autoFit: { minSize: 6, maxSize: 20 },
+      fontFit: { minSize: 6, maxSize: 20 },
     };
     const svg = toSvgString(treeWith(box), {
       resolveSymbolSvg: stubResolveSymbolSvg,
@@ -157,7 +157,7 @@ describe("toSvgString", () => {
       height: 40,
       content: [{ kind: "symbol", symbolId: "mana-w" }],
       fontFamily: "sans-serif",
-      fontSize: 24,
+      fontFit: 24,
       color: "#000",
     };
     const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
@@ -175,7 +175,7 @@ describe("toSvgString", () => {
       height: 40,
       content: [{ kind: "symbol", symbolId: "not-a-real-symbol" }],
       fontFamily: "sans-serif",
-      fontSize: 24,
+      fontFit: 24,
       color: "#000",
     };
     const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });

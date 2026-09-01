@@ -1,4 +1,5 @@
 import type {
+  AutoFit,
   EllipseBox,
   HorizontalAlign,
   ImageBox,
@@ -194,10 +195,11 @@ function wrapTokens(
 function pickAutoFitSize(
   tokens: RawToken[],
   box: TextBox,
+  autoFit: AutoFit,
   measureText: (text: string, fontSize: number, fontFamily: string) => number,
   lineHeightMultiplier: number,
 ): number {
-  const { minSize, maxSize } = box.autoFit!;
+  const { minSize, maxSize } = autoFit;
   for (let size = maxSize; size >= minSize; size -= 1) {
     const lines = wrapTokens(tokens, box.width, size, box.fontFamily, measureText);
     const blockHeight = lines.length * size * lineHeightMultiplier;
@@ -227,16 +229,16 @@ function renderTextBox(
   const lineHeightMultiplier = box.lineHeight ?? DEFAULT_LINE_HEIGHT;
   const tokens = tokenize(box.content);
 
-  const fontSize = box.autoFit
-    ? pickAutoFitSize(tokens, box, measureText, lineHeightMultiplier)
-    : box.fontSize ?? 16;
+  const fontFit = typeof box.fontFit === "number"
+    ? box.fontFit
+    : pickAutoFitSize(tokens, box, box.fontFit, measureText, lineHeightMultiplier);
 
-  const lines = wrapTokens(tokens, box.width, fontSize, box.fontFamily, measureText);
-  const lineHeight = fontSize * lineHeightMultiplier;
+  const lines = wrapTokens(tokens, box.width, fontFit, box.fontFamily, measureText);
+  const lineHeight = fontFit * lineHeightMultiplier;
   const blockHeight = lines.length * lineHeight;
   // 0.85 approximates cap-height-to-baseline distance for a font size, absent real metrics.
-  const startY = box.y + verticalOffset(box.verticalAlign, box.height, blockHeight) + fontSize * 0.85;
-  const spaceWidth = measureText(" ", fontSize, box.fontFamily);
+  const startY = box.y + verticalOffset(box.verticalAlign, box.height, blockHeight) + fontFit * 0.85;
+  const spaceWidth = measureText(" ", fontFit, box.fontFamily);
 
   const g: string[] = [`<g${transform}>`];
   lines.forEach((line, i) => {
@@ -247,20 +249,20 @@ function renderTextBox(
     for (const token of line) {
       if (token.kind === "text") {
         g.push(
-          `<text x="${cursorX}" y="${y}" font-family="${escapeAttr(box.fontFamily)}" font-size="${fontSize}" fill="${escapeAttr(box.color)}"${box.italic ? ' font-style="italic"' : ""}${box.bold ? ' font-weight="bold"' : ""}>${escapeText(token.text ?? "")}</text>`,
+          `<text x="${cursorX}" y="${y}" font-family="${escapeAttr(box.fontFamily)}" font-size="${fontFit}" fill="${escapeAttr(box.color)}"${box.italic ? ' font-style="italic"' : ""}${box.bold ? ' font-weight="bold"' : ""}>${escapeText(token.text ?? "")}</text>`,
         );
       } else {
         const symbol = token.symbolId ? findSymbol(token.symbolId) : undefined;
         if (symbol) {
           const inner = stripOuterSvgTag(resolveSymbolSvg(symbol.svgAssetPath));
-          const symbolY = y - fontSize * 0.8; // roughly aligns the icon's top with the text's cap height
+          const symbolY = y - fontFit * 0.8; // roughly aligns the icon's top with the text's cap height
           g.push(
-            `<svg x="${cursorX}" y="${symbolY}" width="${fontSize}" height="${fontSize}" viewBox="0 0 100 100">${inner}</svg>`,
+            `<svg x="${cursorX}" y="${symbolY}" width="${fontFit}" height="${fontFit}" viewBox="0 0 100 100">${inner}</svg>`,
           );
         } else {
           // Unregistered symbol id: degrade to a visible placeholder rather than silently dropping content.
           g.push(
-            `<text x="${cursorX}" y="${y}" font-family="${escapeAttr(box.fontFamily)}" font-size="${fontSize}" fill="${escapeAttr(box.color)}">{${escapeText(token.symbolId ?? "?")}}</text>`,
+            `<text x="${cursorX}" y="${y}" font-family="${escapeAttr(box.fontFamily)}" font-size="${fontFit}" fill="${escapeAttr(box.color)}">{${escapeText(token.symbolId ?? "?")}}</text>`,
           );
         }
       }

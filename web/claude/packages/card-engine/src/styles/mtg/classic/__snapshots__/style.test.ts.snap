@@ -28,7 +28,7 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
         },
       ],
       "fontFamily": "Georgia, serif",
-      "fontSize": 36,
+      "fontFit": 36,
       "height": 56,
       "id": "name",
       "kind": "text",
@@ -56,7 +56,7 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
         },
       ],
       "fontFamily": "Georgia, serif",
-      "fontSize": 32,
+      "fontFit": 32,
       "height": 56,
       "id": "mana-cost",
       "kind": "text",
@@ -85,7 +85,7 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
         },
       ],
       "fontFamily": "Georgia, serif",
-      "fontSize": 24,
+      "fontFit": 24,
       "height": 44,
       "id": "type-line",
       "kind": "text",
@@ -96,10 +96,6 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
       "zIndex": 2,
     },
     {
-      "autoFit": {
-        "maxSize": 26,
-        "minSize": 14,
-      },
       "color": "#1a1408",
       "content": [
         {
@@ -117,6 +113,10 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
         },
       ],
       "fontFamily": "Georgia, serif",
+      "fontFit": {
+        "maxSize": 26,
+        "minSize": 14,
+      },
       "height": 260,
       "id": "rules-text",
       "kind": "text",
@@ -127,10 +127,6 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
       "zIndex": 2,
     },
     {
-      "autoFit": {
-        "maxSize": 18,
-        "minSize": 12,
-      },
       "color": "#4a3d22",
       "content": [
         {
@@ -139,6 +135,10 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
         },
       ],
       "fontFamily": "Georgia, serif",
+      "fontFit": {
+        "maxSize": 18,
+        "minSize": 12,
+      },
       "height": 70,
       "id": "flavor-text",
       "italic": true,
@@ -159,7 +159,7 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
         },
       ],
       "fontFamily": "Georgia, serif",
-      "fontSize": 28,
+      "fontFit": 28,
       "height": 44,
       "id": "power-toughness",
       "kind": "text",
@@ -178,7 +178,7 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
         },
       ],
       "fontFamily": "Georgia, serif",
-      "fontSize": 16,
+      "fontFit": 16,
       "height": 28,
       "id": "set-number",
       "kind": "text",

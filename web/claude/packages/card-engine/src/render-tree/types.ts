@@ -54,10 +54,7 @@ export interface TextBox extends BaseBox {
   kind: "text";
   content: TextRun[];
   fontFamily: string;
-  /** Fixed font size in px. Mutually exclusive with autoFit. */
-  fontSize?: number;
-  /** Shrink-to-fit range in px — the renderer picks the largest size in range whose layout fits width x height. */
-  autoFit?: AutoFit;
+  fontFit: ( number | AutoFit );
   color: string;
   align?: HorizontalAlign;
   verticalAlign?: VerticalAlign;
