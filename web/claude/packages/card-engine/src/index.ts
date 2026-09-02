@@ -35,5 +35,5 @@ export type { SymbolDef } from "./symbols/registry.js";
 export { findSymbol, symbolsForGame, SYMBOL_REGISTRY } from "./symbols/registry.js";
 export { parseInlineSymbols } from "./symbols/parseInlineSymbols.js";
 
-export type { RenderFn, StyleDef } from "./styles/types.js";
+export type { CardData, RenderFn, StyleDef } from "./styles/types.js";
 export { findStyle, stylesForGame, STYLE_REGISTRY } from "./registry.js";
