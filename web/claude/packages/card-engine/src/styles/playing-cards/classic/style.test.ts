@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { toSvgString } from "../../../render/toSvgString.js";
-import type { CardData } from "../../../render-tree/types.js";
+import type { CardData } from "../../../styles/types.js";
 import { resolveSymbolSvgForTests } from "../../../testUtils/resolveSymbolSvg.js";
 import { renderPlayingCardClassic } from "./style.js";
 

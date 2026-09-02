@@ -16,7 +16,6 @@ export { validateFieldValues } from "./schema/validate.js";
 
 export type {
   AutoFit,
-  CardData,
   EllipseBox,
   HorizontalAlign,
   ImageBox,

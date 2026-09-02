@@ -1,17 +1,4 @@
-import type { Card as MtgCard } from "../games/magic.js";
-import type { Card as PlayingCardsCard } from "../games/playing-cards.js";
-
 import type { AssetRef } from "../schema/types.js";
-
-/** The values a user has entered for one card, scoped to a specific game. */
-export type CardData =
-  | { gameId: "mtg"; fields: MtgCard }
-  | { gameId: "playing-cards"; fields: PlayingCardsCard };
-
-// Per-game aliases, so a style file can name exactly the branch it accepts
-// (e.g. `render(card: MtgCardData, ...)`) instead of the full union.
-export type MtgCardData = Extract<CardData, { gameId: "mtg" }>;
-export type PlayingCardsCardData = Extract<CardData, { gameId: "playing-cards" }>;
 
 /**
  * Everything a style is allowed to know beyond the card's own fields.

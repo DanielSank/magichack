@@ -1,10 +1,10 @@
 import type {
-  PlayingCardsCardData,
   RenderBox,
   RenderContext,
   RenderTree,
   TextRun,
 } from "../../../render-tree/types.js";
+import type { PlayingCardsCardData } from "../../../styles/types.js";
 import { pipLayoutForRank } from "../../shared/pipLayout.js";
 
 const CARD_WIDTH = 750;

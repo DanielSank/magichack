@@ -10,7 +10,8 @@ import { fileURLToPath } from "node:url";
 
 import { findStyle } from "../src/registry.js";
 import { toSvgString } from "../src/render/toSvgString.js";
-import type { CardData, RenderContext } from "../src/render-tree/types.js";
+import type { RenderContext } from "../src/render-tree/types.js";
+import type { CardData } from "../src/styles/types.js";
 import { parseGameSchema } from "../src/schema/load.js";
 import type { FieldValues } from "../src/schema/types.js";
 import { validateFieldValues } from "../src/schema/validate.js";

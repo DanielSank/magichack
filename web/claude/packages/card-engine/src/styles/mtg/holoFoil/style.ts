@@ -1,4 +1,5 @@
-import type { MtgCardData, RenderBox, RenderContext, RenderTree } from "../../../render-tree/types.js";
+import type { RenderBox, RenderContext, RenderTree } from "../../../render-tree/types.js";
+import type { MtgCardData } from "../../../styles/types.js";
 import { parseInlineSymbols } from "../../../symbols/parseInlineSymbols.js";
 
 const CARD_WIDTH = 750;
