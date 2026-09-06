@@ -5,7 +5,6 @@ import { parseInlineSymbols } from "../../../symbols/parseInlineSymbols.js";
 const CARD_WIDTH = 750;
 const CARD_HEIGHT = 1050;
 const MARGIN = 36;
-const FRAME_COLOR = "#2b2210";
 const INK_COLOR = "#1a1408";
 const MUTED_INK = "#4a3d22";
 const TYPE_BAR_FILL = "#ded0ab";
@@ -28,15 +27,14 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
 
   const boxes: RenderBox[] = [
     {
-      kind: "rect",
+      kind: "rasterAsset",
       id: "frame",
-      x: MARGIN / 2,
-      y: MARGIN / 2,
-      width: CARD_WIDTH - MARGIN,
-      height: CARD_HEIGHT - MARGIN,
-      stroke: FRAME_COLOR,
-      strokeWidth: 4,
-      cornerRadius: 24,
+      rasterAssetPath: "src/styles/mtg/classic/frame.png",
+      x: 0,
+      y: 0,
+      width: CARD_WIDTH,
+      height: CARD_HEIGHT,
+      fit: "cover",
       zIndex: 0,
     },
     {
@@ -47,7 +45,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       width: CARD_WIDTH - MARGIN * 2 - 160,
       height: 56,
       content: [{ kind: "text", text: name }],
-      fontFamily: "Georgia, serif",
+      fontFamily: "Beleren Bold",
       fontFit: 36,
       color: INK_COLOR,
       bold: true,
@@ -87,9 +85,10 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       width: CARD_WIDTH - MARGIN * 2 - 24,
       height: 44,
       content: [{ kind: "text", text: typeLine }],
-      fontFamily: "Georgia, serif",
+      fontFamily: "Beleren Bold",
       fontFit: 24,
       color: INK_COLOR,
+      bold: true,
       verticalAlign: "middle",
       zIndex: 2,
     },
@@ -101,7 +100,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       width: CARD_WIDTH - MARGIN * 2 - 24,
       height: 260,
       content: parseInlineSymbols(rulesText),
-      fontFamily: "Georgia, serif",
+      fontFamily: "MPlantin",
       color: INK_COLOR,
       fontFit: { minSize: 14, maxSize: 26 },
       verticalAlign: "top",
@@ -132,7 +131,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       width: CARD_WIDTH - MARGIN * 2 - 24,
       height: 70,
       content: [{ kind: "text", text: flavor }],
-      fontFamily: "Georgia, serif",
+      fontFamily: "MPlantin",
       color: MUTED_INK,
       italic: true,
       fontFit: { minSize: 12, maxSize: 18 },
@@ -149,7 +148,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       width: 120,
       height: 44,
       content: [{ kind: "text", text: `${power}/${toughness}` }],
-      fontFamily: "Georgia, serif",
+      fontFamily: "Beleren Bold",
       fontFit: 28,
       color: INK_COLOR,
       bold: true,
@@ -168,7 +167,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       width: 160,
       height: 28,
       content: [{ kind: "text", text: `${context.positionInSet}/${context.setSize}` }],
-      fontFamily: "Georgia, serif",
+      fontFamily: "MPlantin",
       fontFit: 16,
       color: MUTED_INK,
       zIndex: 2,

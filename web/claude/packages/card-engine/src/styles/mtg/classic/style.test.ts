@@ -75,7 +75,17 @@ describe("renderMtgClassic", () => {
 
   it("matches its serialized SVG snapshot for a canonical sample card (visual-regression net)", () => {
     const tree = renderMtgClassic(SAMPLE_CARD, SAMPLE_CONTEXT);
-    const svg = toSvgString(tree, { resolveSymbolSvg: resolveSymbolSvgForTests });
+    // Unlike the tiny placeholder symbol SVGs, frame.png (and the real mtg
+    // font files) are non-trivial binary assets — embedding their actual
+    // base64 in a committed snapshot would be unreadable and huge for no
+    // benefit, so both are stubbed here; the wiring (which path/family maps
+    // to which box, and that a variant with no resolved data is left alone)
+    // is what this snapshot is checking.
+    const svg = toSvgString(tree, {
+      resolveSymbolSvg: resolveSymbolSvgForTests,
+      resolveRasterAsset: (path) => `data:image/png;base64,STUB(${path})`,
+      resolveFontData: (family, weight, style) => `data:font/woff2;base64,STUB(${family}|${weight}|${style})`,
+    });
     expect(svg).toMatchSnapshot();
   });
 });

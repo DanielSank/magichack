@@ -17,5 +17,14 @@ apps/server/__pycache__/
 .vscode/*
 !.vscode/extensions.json
 
-# Scratch output from demo scripts
-*.local.svg
+# Images
+*.png
+*.jpg
+*.jpeg
+*.webp
+
+# Fonts
+*.woff
+*.woff2
+*.ttf
+*.otf

@@ -85,7 +85,24 @@ export interface SvgAssetBox extends BaseBox {
   svgAssetPath: string;
 }
 
-export type RenderBox = TextBox | ImageBox | RectBox | EllipseBox | SvgAssetBox;
+/**
+ * SvgAssetBox's raster sibling: a package-bundled JPG/PNG shipped with a
+ * style (e.g. a photographic frame texture), not user-uploaded — unlike
+ * ImageBox it's not an AssetRef. Resolved the same way (see
+ * ToSvgOptions.resolveRasterAsset in render/toSvgString.ts): a style names
+ * an asset path, and the edge reads the real file and hands back a ready-to-
+ * embed data URI, keeping card-engine itself free of file I/O. Unlike
+ * SvgAssetBox (always stretched to the box, fine for vector art designed to
+ * fill any aspect ratio), raster photographic content usually shouldn't be
+ * distorted, so this carries the same `fit` option as ImageBox.
+ */
+export interface RasterAssetBox extends BaseBox {
+  kind: "rasterAsset";
+  rasterAssetPath: string;
+  fit?: "cover" | "contain" | "fill";
+}
+
+export type RenderBox = TextBox | ImageBox | RectBox | EllipseBox | SvgAssetBox | RasterAssetBox;
 
 /**
  * The declarative output of a style's render() function: a set of

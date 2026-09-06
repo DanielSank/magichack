@@ -19,6 +19,8 @@ export type {
   EllipseBox,
   HorizontalAlign,
   ImageBox,
+  RasterAssetBox,
+  SvgAssetBox,
   RectBox,
   RenderBox,
   RenderContext,
@@ -28,7 +30,7 @@ export type {
   VerticalAlign,
 } from "./render-tree/types.js";
 
-export type { ToSvgOptions } from "./render/toSvgString.js";
+export type { FontStyle, FontWeight, ToSvgOptions } from "./render/toSvgString.js";
 export { toSvgString } from "./render/toSvgString.js";
 
 export type { SymbolDef } from "./symbols/registry.js";

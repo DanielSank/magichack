@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { EllipseBox, ImageBox, RectBox, RenderTree, TextBox } from "../render-tree/types.js";
+import type { EllipseBox, ImageBox, RasterAssetBox, RectBox, RenderTree, TextBox } from "../render-tree/types.js";
 import { toSvgString } from "./toSvgString.js";
 
 const stubResolveSymbolSvg = (path: string) => `<svg viewBox="0 0 100 100"><!-- ${path} --></svg>`;
@@ -63,6 +63,38 @@ describe("toSvgString", () => {
     const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
     expect(svg).toContain('href="https://example.com/a.png"');
     expect(svg).toContain('preserveAspectRatio="xMidYMid meet"');
+  });
+
+  it("renders a raster asset box via resolveRasterAsset, with preserveAspectRatio matching `fit`", () => {
+    const box: RasterAssetBox = {
+      kind: "rasterAsset",
+      id: "frame",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      rasterAssetPath: "src/styles/mtg/classic/frame.jpg",
+      fit: "cover",
+    };
+    const svg = toSvgString(treeWith(box), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveRasterAsset: (path) => `data:image/jpeg;base64,STUB(${path})`,
+    });
+    expect(svg).toContain('href="data:image/jpeg;base64,STUB(src/styles/mtg/classic/frame.jpg)"');
+    expect(svg).toContain('preserveAspectRatio="xMidYMid slice"');
+  });
+
+  it("throws a clear error for a raster asset box when no resolveRasterAsset was given", () => {
+    const box: RasterAssetBox = {
+      kind: "rasterAsset",
+      id: "frame",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      rasterAssetPath: "src/styles/mtg/classic/frame.jpg",
+    };
+    expect(() => toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg })).toThrow(/resolveRasterAsset/);
   });
 
   it("renders single-line text left-aligned by default", () => {
@@ -180,6 +212,97 @@ describe("toSvgString", () => {
     };
     const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
     expect(svg).toContain(">{not-a-real-symbol}</text>");
+  });
+
+  it("embeds a @font-face when resolveFontData returns data for a used (family, weight, style)", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "text", text: "Hi" }],
+      fontFamily: "Beleren Bold",
+      fontFit: 24,
+      color: "#000",
+      bold: true,
+    };
+    const svg = toSvgString(treeWith(box), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveFontData: (family, weight, style) =>
+        family === "Beleren Bold" && weight === "bold" && style === "normal"
+          ? "data:font/woff2;base64,AAAA"
+          : undefined,
+    });
+    expect(svg).toContain(
+      '<style>@font-face{font-family:"Beleren Bold";font-weight:bold;font-style:normal;src:url(data:font/woff2;base64,AAAA);}</style>',
+    );
+    // The box's own font-family attribute is untouched either way.
+    expect(svg).toContain('font-family="Beleren Bold"');
+  });
+
+  it("leaves font-family as a literal value when resolveFontData has no data for that variant", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "text", text: "Hi" }],
+      fontFamily: "Georgia, serif",
+      fontFit: 24,
+      color: "#000",
+    };
+    const svg = toSvgString(treeWith(box), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveFontData: () => undefined,
+    });
+    expect(svg).not.toContain("@font-face");
+    expect(svg).toContain('font-family="Georgia, serif"');
+  });
+
+  it("emits no <style> block at all when resolveFontData is omitted", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "text", text: "Hi" }],
+      fontFamily: "Georgia, serif",
+      fontFit: 24,
+      color: "#000",
+    };
+    const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
+    expect(svg).not.toContain("<style>");
+  });
+
+  it("only asks resolveFontData once per distinct (family, weight, style) actually used", () => {
+    const boxA: TextBox = {
+      kind: "text",
+      id: "a",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "text", text: "Hi" }],
+      fontFamily: "MPlantin",
+      fontFit: 16,
+      color: "#000",
+    };
+    const boxB: TextBox = { ...boxA, id: "b", content: [{ kind: "text", text: "There" }] };
+    const seen: string[] = [];
+    toSvgString(treeWith(boxA, boxB), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveFontData: (family, weight, style) => {
+        seen.push(`${family}|${weight}|${style}`);
+        return undefined;
+      },
+    });
+    expect(seen).toEqual(["MPlantin|normal|normal"]);
   });
 
   it("paints lower zIndex boxes before higher zIndex boxes", () => {
