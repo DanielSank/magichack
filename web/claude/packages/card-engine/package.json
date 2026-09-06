@@ -12,7 +12,8 @@
     "build": "tsc -p tsconfig.build.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
-    "demo": "tsx scripts/renderDemo.ts"
+    "demo": "tsx scripts/renderDemo.ts",
+    "demo:grid": "tsx scripts/renderGrid.ts"
   },
   "dependencies": {
     "js-yaml": "^4.1.0"
@@ -20,6 +21,7 @@
   "devDependencies": {
     "@types/js-yaml": "^4.0.9",
     "@types/node": "^20.14.0",
+    "fontkit": "^2.0.4",
     "tsx": "^4.19.0",
     "typescript": "^5.5.0",
     "vitest": "^2.1.0"

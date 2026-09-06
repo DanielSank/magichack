@@ -29,7 +29,7 @@ exports[`renderMtgHoloFoil > matches its serialized SVG snapshot for a canonical
 <rect x="36" y="536" width="678" height="44" fill="#e9dcb8"/>
 <g>
 <text x="36" y="73" font-family="Georgia, serif" font-size="36" fill="#241d0d" font-weight="bold">Ember</text>
-<text x="169.92" y="73" font-family="Georgia, serif" font-size="36" fill="#241d0d" font-weight="bold">Hatchling</text>
+<text x="157.68" y="73" font-family="Georgia, serif" font-size="36" fill="#241d0d" font-weight="bold">Hatchling</text>
 </g>
 <g>
 <svg x="618" y="46.4" width="32" height="32" viewBox="0 0 100 100">
@@ -47,28 +47,28 @@ exports[`renderMtgHoloFoil > matches its serialized SVG snapshot for a canonical
 </g>
 <g>
 <text x="48" y="564" font-family="Georgia, serif" font-size="24" fill="#241d0d">Creature,</text>
-<text x="196.79999999999998" y="564" font-family="Georgia, serif" font-size="24" fill="#241d0d">Dragon</text>
+<text x="188.64" y="564" font-family="Georgia, serif" font-size="24" fill="#241d0d">Dragon</text>
 </g>
 <g>
 <text x="48" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">Flying.</text>
-<svg x="176.96" y="593.3000000000001" width="26" height="26" viewBox="0 0 100 100">
+<svg x="48" y="624.5000000000001" width="26" height="26" viewBox="0 0 100 100">
   <circle cx="50" cy="50" r="48" fill="#f2e9c9" stroke="#8a6d1a" stroke-width="4"/>
   <path d="M50 20 L50 50 L72 62" stroke="#8a6d1a" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
-<text x="202.96" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">:</text>
-<text x="235.20000000000002" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">Deal</text>
-<text x="315.8" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">1</text>
-<text x="348.04" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">damage</text>
-<text x="460.88" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">to</text>
-<text x="509.24" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">any</text>
-<text x="48" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">target.</text>
+<text x="74" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">:</text>
+<text x="97.4" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">Deal</text>
+<text x="169.16000000000003" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">1</text>
+<text x="192.56000000000003" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">damage</text>
+<text x="296.56000000000006" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">to</text>
+<text x="336.08000000000004" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">any</text>
+<text x="391.72" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">target.</text>
 </g>
 <g>
 <text x="48" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">It</text>
-<text x="81.48" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">hatched</text>
-<text x="170.76" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">already</text>
-<text x="260.03999999999996" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">breathing</text>
-<text x="371.64" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">fire.</text>
+<text x="75.36" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">hatched</text>
+<text x="158.52" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">already</text>
+<text x="241.68" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">breathing</text>
+<text x="347.16" y="817.3" font-family="Georgia, serif" font-size="18" fill="#4a3d22" font-style="italic">fire.</text>
 </g>
 <g>
 <text x="641.92" y="987" font-family="Georgia, serif" font-size="28" fill="#241d0d" font-weight="bold">2/2</text>

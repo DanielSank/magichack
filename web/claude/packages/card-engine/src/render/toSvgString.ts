@@ -54,7 +54,7 @@ export type FontWeight = "normal" | "bold";
 export type FontStyle = "normal" | "italic";
 
 export interface ToSvgOptions {
-  measureText?: (text: string, fontSize: number, fontFamily: string) => number;
+  measureText?: (text: string, fontSize: number, fontFamily: string, weight: FontWeight, style: FontStyle) => number;
   resolveSymbolSvg: (svgAssetPath: string) => string;
   resolveRasterAsset?: (rasterAssetPath: string) => string;
   resolveFontData?: (fontFamily: string, weight: FontWeight, style: FontStyle) => string | undefined;
@@ -66,8 +66,17 @@ const DEFAULT_LINE_HEIGHT = 1.2;
 // gap). Tuned against a serif fallback font with no Georgia installed —
 // revisit if this is measurably off against your target font(s).
 const AVG_CHAR_WIDTH_EM = 0.62;
+// A space is much narrower than the average glyph AVG_CHAR_WIDTH_EM is tuned
+// for — reusing that constant for spaceWidth (wrapTokens/renderTextBox both
+// measure a lone " ") made every inter-word gap render about 2x too wide.
+const AVG_SPACE_WIDTH_EM = 0.28;
 
-function defaultMeasureText(text: string, fontSize: number): number {
+// Exported so an environment with better metrics available (e.g. the demo
+// scripts' real per-glyph measurement, see scripts/lib/measureText.ts) can
+// fall back to this same guess for a family it has no real data for,
+// instead of duplicating this heuristic a second time.
+export function defaultMeasureText(text: string, fontSize: number): number {
+  if (/^\s+$/.test(text)) return text.length * fontSize * AVG_SPACE_WIDTH_EM;
   return text.length * fontSize * AVG_CHAR_WIDTH_EM;
 }
 
@@ -96,7 +105,7 @@ export function toSvgString(tree: RenderTree, options: ToSvgOptions): string {
 
 function renderBox(
   box: RenderBox,
-  measureText: (text: string, fontSize: number, fontFamily: string) => number,
+  measureText: (text: string, fontSize: number, fontFamily: string, weight: FontWeight, style: FontStyle) => number,
   resolveSymbolSvg: (path: string) => string,
   resolveRasterAsset: ((path: string) => string) | undefined,
 ): string {
@@ -214,7 +223,7 @@ function buildFontFaceStyle(
 // --- Text + inline symbol flow -------------------------------------------
 
 interface RawToken {
-  kind: "text" | "symbol";
+  kind: "text" | "symbol" | "break";
   text?: string;
   symbolId?: string;
   trailingSpace: boolean;
@@ -234,6 +243,17 @@ function tokenize(content: TextRun[]): RawToken[] {
     for (const piece of run.text.split(/(\s+)/)) {
       if (piece === "") continue;
       if (/^\s+$/.test(piece)) {
+        // A run of whitespace containing a real newline is an explicit hard
+        // break (e.g. joined rules-text lines), not a word-wrap point — one
+        // "break" token per newline, so "a\n\nb" still leaves a blank line.
+        // Plain spaces/tabs stay a soft gap, handled by wrapTokens' wrapping.
+        const newlineCount = piece.split("\n").length - 1;
+        if (newlineCount > 0) {
+          for (let i = 0; i < newlineCount; i++) {
+            tokens.push({ kind: "break", trailingSpace: false });
+          }
+          continue;
+        }
         const prev = tokens[tokens.length - 1];
         if (prev) prev.trailingSpace = true;
         continue;
@@ -249,9 +269,17 @@ function wrapTokens(
   maxWidth: number,
   fontSize: number,
   fontFamily: string,
-  measureText: (text: string, fontSize: number, fontFamily: string) => number,
+  weight: FontWeight,
+  style: FontStyle,
+  measureText: (text: string, fontSize: number, fontFamily: string, weight: FontWeight, style: FontStyle) => number,
 ): LayoutToken[][] {
-  const spaceWidth = measureText(" ", fontSize, fontFamily);
+  // No content at all should mean zero lines (an empty text box takes no
+  // vertical space) — handled here rather than by filtering empty lines
+  // below, which would also wrongly swallow a genuine blank line that a
+  // doubled "\n\n" break is deliberately asking for.
+  if (tokens.length === 0) return [];
+
+  const spaceWidth = measureText(" ", fontSize, fontFamily, weight, style);
   const lines: LayoutToken[][] = [];
   let currentLine: LayoutToken[] = [];
   let currentWidth = 0;
@@ -265,7 +293,11 @@ function wrapTokens(
   };
 
   for (const token of tokens) {
-    const width = token.kind === "symbol" ? fontSize : measureText(token.text ?? "", fontSize, fontFamily);
+    if (token.kind === "break") {
+      pushLine();
+      continue;
+    }
+    const width = token.kind === "symbol" ? fontSize : measureText(token.text ?? "", fontSize, fontFamily, weight, style);
     const prefixSpace = currentLine.length > 0 ? spaceWidth : 0;
 
     // Force at least one token per line even if it alone exceeds maxWidth,
@@ -279,19 +311,21 @@ function wrapTokens(
   }
   pushLine();
 
-  return lines.filter((line) => line.length > 0);
+  return lines;
 }
 
 function pickAutoFitSize(
   tokens: RawToken[],
   box: TextBox,
   autoFit: AutoFit,
-  measureText: (text: string, fontSize: number, fontFamily: string) => number,
+  weight: FontWeight,
+  style: FontStyle,
+  measureText: (text: string, fontSize: number, fontFamily: string, weight: FontWeight, style: FontStyle) => number,
   lineHeightMultiplier: number,
 ): number {
   const { minSize, maxSize } = autoFit;
   for (let size = maxSize; size >= minSize; size -= 1) {
-    const lines = wrapTokens(tokens, box.width, size, box.fontFamily, measureText);
+    const lines = wrapTokens(tokens, box.width, size, box.fontFamily, weight, style, measureText);
     const blockHeight = lines.length * size * lineHeightMultiplier;
     if (blockHeight <= box.height) return size;
   }
@@ -312,23 +346,25 @@ function horizontalOffset(align: HorizontalAlign | undefined, boxWidth: number, 
 
 function renderTextBox(
   box: TextBox,
-  measureText: (text: string, fontSize: number, fontFamily: string) => number,
+  measureText: (text: string, fontSize: number, fontFamily: string, weight: FontWeight, style: FontStyle) => number,
   resolveSymbolSvg: (path: string) => string,
   transform: string,
 ): string {
   const lineHeightMultiplier = box.lineHeight ?? DEFAULT_LINE_HEIGHT;
   const tokens = tokenize(box.content);
+  const weight: FontWeight = box.bold ? "bold" : "normal";
+  const style: FontStyle = box.italic ? "italic" : "normal";
 
   const fontFit = typeof box.fontFit === "number"
     ? box.fontFit
-    : pickAutoFitSize(tokens, box, box.fontFit, measureText, lineHeightMultiplier);
+    : pickAutoFitSize(tokens, box, box.fontFit, weight, style, measureText, lineHeightMultiplier);
 
-  const lines = wrapTokens(tokens, box.width, fontFit, box.fontFamily, measureText);
+  const lines = wrapTokens(tokens, box.width, fontFit, box.fontFamily, weight, style, measureText);
   const lineHeight = fontFit * lineHeightMultiplier;
   const blockHeight = lines.length * lineHeight;
   // 0.85 approximates cap-height-to-baseline distance for a font size, absent real metrics.
   const startY = box.y + verticalOffset(box.verticalAlign, box.height, blockHeight) + fontFit * 0.85;
-  const spaceWidth = measureText(" ", fontFit, box.fontFamily);
+  const spaceWidth = measureText(" ", fontFit, box.fontFamily, weight, style);
 
   const g: string[] = [`<g${transform}>`];
   lines.forEach((line, i) => {
