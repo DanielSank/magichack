@@ -1,8 +1,8 @@
 import type { AssetRef } from "../schema/types.js";
 
 /**
- * Everything a style is allowed to know beyond the card's own fields.
- * Deliberately minimal: styles must not be able to reference other cards'
+ * Everything a style is allowed to know beyond the card's own fields,
+ * deliberately minimal. Styles must not be able to reference other cards'
  * data, only a card's own position within its containing set (if any).
  */
 export interface RenderContext {
@@ -13,7 +13,7 @@ export interface RenderContext {
 /**
  * One run of inline content within a TextBox: either literal text or a
  * reference into the symbol registry (see ../symbols). Keeping these as a
- * flat, ordered list — rather than a plain string — is what lets a style mix
+ * flat, ordered list, rather than a plain string, is what lets a style mix
  * text and inline icons (e.g. mana symbols) within one field.
  */
 export type TextRun = { kind: "text"; text: string } | { kind: "symbol"; symbolId: string };
@@ -87,7 +87,7 @@ export interface SvgAssetBox extends BaseBox {
 
 /**
  * SvgAssetBox's raster sibling: a package-bundled JPG/PNG shipped with a
- * style (e.g. a photographic frame texture), not user-uploaded — unlike
+ * style (e.g. a photographic frame texture), not user-uploaded. Unlike
  * ImageBox it's not an AssetRef. Resolved the same way (see
  * ToSvgOptions.resolveRasterAsset in render/toSvgString.ts): a style names
  * an asset path, and the edge reads the real file and hands back a ready-to-

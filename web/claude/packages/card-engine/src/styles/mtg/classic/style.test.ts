@@ -26,7 +26,6 @@ describe("renderMtgClassic", () => {
       "frame",
       "name",
       "mana-cost",
-      "type-line-bg",
       "type-line",
       "rules-text",
       "flavor-text",

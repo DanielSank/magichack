@@ -4,16 +4,13 @@ import { parseInlineSymbols } from "../../../symbols/parseInlineSymbols.js";
 
 const CARD_WIDTH = 750;
 const CARD_HEIGHT = 1050;
+// 300 DPI for 2.5"x3.5" card
+
 const MARGIN = 36;
 const INK_COLOR = "#1a1408";
 const MUTED_INK = "#4a3d22";
 const TYPE_BAR_FILL = "#ded0ab";
 
-/**
- * The one built-in style for the "mtg" game. Exercises the inline-symbol
- * pipeline via the mana cost field (and would via rules text symbols like
- * {T}, if present) — see plan M1.
- */
 export function renderMtgClassic(card: MtgCardData, context: RenderContext): RenderTree {
   const fields = card.fields;
   const name = fields.name;
@@ -40,8 +37,8 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
     {
       kind: "text",
       id: "name",
-      x: MARGIN,
-      y: MARGIN,
+      x: 65,
+      y: 60,
       width: CARD_WIDTH - MARGIN * 2 - 160,
       height: 56,
       content: [{ kind: "text", text: name }],
@@ -55,8 +52,8 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
     {
       kind: "text",
       id: "mana-cost",
-      x: CARD_WIDTH - MARGIN - 160,
-      y: MARGIN,
+      x: CARD_WIDTH - MARGIN - 190,
+      y: MARGIN + 20,
       width: 160,
       height: 56,
       content: parseInlineSymbols(cost),
@@ -68,20 +65,10 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       zIndex: 2,
     },
     {
-      kind: "rect",
-      id: "type-line-bg",
-      x: MARGIN,
-      y: MARGIN + 500,
-      width: CARD_WIDTH - MARGIN * 2,
-      height: 44,
-      fill: TYPE_BAR_FILL,
-      zIndex: 1,
-    },
-    {
       kind: "text",
       id: "type-line",
-      x: MARGIN + 12,
-      y: MARGIN + 500,
+      x: MARGIN + 32,
+      y: 600,
       width: CARD_WIDTH - MARGIN * 2 - 24,
       height: 44,
       content: [{ kind: "text", text: typeLine }],
@@ -95,14 +82,14 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
     {
       kind: "text",
       id: "rules-text",
-      x: MARGIN + 12,
-      y: MARGIN + 556,
-      width: CARD_WIDTH - MARGIN * 2 - 24,
+      x: MARGIN + 42,
+      y: 680,
+      width: CARD_WIDTH - MARGIN * 2 - 100,
       height: 260,
       content: parseInlineSymbols(rulesText),
       fontFamily: "MPlantin",
       color: INK_COLOR,
-      fontFit: { minSize: 14, maxSize: 26 },
+      fontFit: { minSize: 14, maxSize: 36 },
       verticalAlign: "top",
       zIndex: 2,
     },
