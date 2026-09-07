@@ -38,5 +38,4 @@ export { findSymbol, symbolsForGame, SYMBOL_REGISTRY } from "./symbols/registry.
 export { parseInlineSymbols } from "./symbols/parseInlineSymbols.js";
 
 export type { CardData, RenderFn, StyleDef } from "./styles/types.js";
-export type { StyleInfo } from "./registry.js";
-export { findStyle, renderCard, stylesForGame, STYLE_REGISTRY } from "./registry.js";
+export { renderCard, stylesForGame, STYLE_REGISTRY } from "./registry.js";
