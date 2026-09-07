@@ -22,6 +22,7 @@ apps/server/__pycache__/
 *.jpg
 *.jpeg
 *.webp
+*.svg
 
 # Fonts
 *.woff
