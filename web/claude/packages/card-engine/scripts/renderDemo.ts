@@ -7,7 +7,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
-import { renderCard } from "../src/registry.js";
+import { selectStyle } from "../src/registry.js";
 import { toSvgString } from "../src/render/toSvgString.js";
 import type { RenderContext } from "../src/render-tree/types.js";
 import type { CardData } from "../src/styles/types.js";
@@ -40,7 +40,14 @@ function renderAndSave(styleId: string, cardData: CardData, context: RenderConte
     return;
   }
 
-  const tree = renderCard(cardData, styleId, context);
+  // Selection and rendering are separate steps: selectStyle is the one
+  // fallible lookup (a bad styleId is a real, actionable error here); once
+  // resolved, style.render(card, ...) can't fail on a compatibility basis.
+  const selected = selectStyle(cardData, styleId);
+  if (!selected) {
+    throw new Error(`No style registered with id "${styleId}" for game "${cardData.gameId}"`);
+  }
+  const tree = selected.style.render(selected.card, context);
   const svg = toSvgString(tree, { resolveSymbolSvg, resolveRasterAsset, resolveFontData, measureText });
   const outPath = join(packageRoot, outFile);
   writeFileSync(outPath, svg, "utf-8");

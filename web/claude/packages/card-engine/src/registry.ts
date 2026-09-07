@@ -1,8 +1,7 @@
-import type { RenderContext, RenderTree } from "./render-tree/types.js";
 import { renderMtgClassic } from "./styles/mtg/classic/style.js";
 import { renderMtgHoloFoil } from "./styles/mtg/holoFoil/style.js";
 import { renderPlayingCardClassic } from "./styles/playing-cards/classic/style.js";
-import type { CardData, StyleRegistry } from "./styles/types.js";
+import type { CardAndStyle, CardData, StyleDef, StyleRegistry } from "./styles/types.js";
 
 
 export const STYLE_REGISTRY: StyleRegistry = {
@@ -24,29 +23,13 @@ export function stylesForGame<G extends CardData["gameId"]>(gameId: G): StyleReg
   return STYLE_REGISTRY[gameId];
 }
 
-/**
- * Finds the style with `styleId` for `card`'s game and renders `card` with
- * it. The one place that dispatches on a card's `gameId` tag to reach a
- * concretely-typed style array — every other consumer just calls this
- * function rather than needing its own "which game is this" branch. The
- * `default` arm's `never` assignment is a compile-time exhaustiveness check:
- * adding a game to `CardData` without a matching `case` here fails to build.
- */
-export function renderCard(card: CardData, styleId: string, context: RenderContext): RenderTree {
-  switch (card.gameId) {
-    case "mtg": {
-      const style = STYLE_REGISTRY.mtg.find((s) => s.id === styleId);
-      if (!style) throw new Error(`No style registered with id "${styleId}" for game "mtg"`);
-      return style.render(card, context);
-    }
-    case "playing-cards": {
-      const style = STYLE_REGISTRY["playing-cards"].find((s) => s.id === styleId);
-      if (!style) throw new Error(`No style registered with id "${styleId}" for game "playing-cards"`);
-      return style.render(card, context);
-    }
-    default: {
-      const exhaustive: never = card;
-      throw new Error(`Unhandled game "${(exhaustive as CardData).gameId}"`);
-    }
-  }
+export function selectStyle<C extends CardData>(cardData: C, styleId: string): CardAndStyle<C> | undefined {
+  // `as unknown as` (not a direct `as`): the actual registry value is a
+  // union across every game's array, which TS correctly sees as too
+  // unrelated to the caller's specific `C` to allow a direct cast — the
+  // `unknown` hop is where we assert the link `renderCard` used to make
+  // implicitly, now made explicit since `C` is generic here.
+  const styles = STYLE_REGISTRY[cardData.gameId] as unknown as StyleDef<C>[];
+  const style = styles.find((s) => s.id === styleId);
+  return style ? { cardData, style } : undefined;
 }

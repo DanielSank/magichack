@@ -27,3 +27,8 @@ export type StyleRegistry = { [G in CardData["gameId"]]: StyleDef<Extract<CardDa
  * Styles, keyed by the game they render.
  * StyleRegistry is not generic; G is a mapped type.
 */
+
+export interface CardAndStyle<C extends CardData = CardData> {
+  cardData: C;
+  style: StyleDef<C>;
+}
