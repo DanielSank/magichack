@@ -117,7 +117,7 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
       "zIndex": 2,
     },
     {
-      "color": "#4a3d22",
+      "color": "#1a1408",
       "content": [
         {
           "kind": "text",
@@ -126,7 +126,7 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
       ],
       "fontFamily": "MPlantin",
       "fontFit": {
-        "maxSize": 18,
+        "maxSize": 36,
         "minSize": 12,
       },
       "height": 70,
@@ -134,8 +134,8 @@ exports[`renderMtgClassic > matches its RenderTree snapshot for a canonical samp
       "italic": true,
       "kind": "text",
       "width": 654,
-      "x": 48,
-      "y": 802,
+      "x": 78,
+      "y": 836,
       "zIndex": 2,
     },
     {
@@ -225,11 +225,11 @@ exports[`renderMtgClassic > matches its serialized SVG snapshot for a canonical 
 <text x="78" y="797" font-family="MPlantin" font-size="36" fill="#1a1408">target.</text>
 </g>
 <g>
-<text x="48" y="817.3" font-family="MPlantin" font-size="18" fill="#4a3d22" font-style="italic">It</text>
-<text x="75.36" y="817.3" font-family="MPlantin" font-size="18" fill="#4a3d22" font-style="italic">hatched</text>
-<text x="158.52" y="817.3" font-family="MPlantin" font-size="18" fill="#4a3d22" font-style="italic">already</text>
-<text x="241.68" y="817.3" font-family="MPlantin" font-size="18" fill="#4a3d22" font-style="italic">breathing</text>
-<text x="347.16" y="817.3" font-family="MPlantin" font-size="18" fill="#4a3d22" font-style="italic">fire.</text>
+<text x="78" y="864.05" font-family="MPlantin" font-size="33" fill="#1a1408" font-style="italic">It</text>
+<text x="128.16" y="864.05" font-family="MPlantin" font-size="33" fill="#1a1408" font-style="italic">hatched</text>
+<text x="280.62" y="864.05" font-family="MPlantin" font-size="33" fill="#1a1408" font-style="italic">already</text>
+<text x="433.08000000000004" y="864.05" font-family="MPlantin" font-size="33" fill="#1a1408" font-style="italic">breathing</text>
+<text x="626.46" y="864.05" font-family="MPlantin" font-size="33" fill="#1a1408" font-style="italic">fire.</text>
 </g>
 <g>
 <text x="641.92" y="987" font-family="Beleren Bold" font-size="28" fill="#1a1408" font-weight="bold">2/2</text>
