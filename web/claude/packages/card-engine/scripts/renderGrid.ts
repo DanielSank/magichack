@@ -13,7 +13,7 @@
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { findStyle } from "../src/registry.js";
+import { renderCard } from "../src/registry.js";
 import { toSvgString } from "../src/render/toSvgString.js";
 import type { RenderTree } from "../src/render-tree/types.js";
 import type { CardData } from "../src/styles/types.js";
@@ -72,12 +72,7 @@ function buildBoxOutlinesOverlay(tree: RenderTree): string {
 }
 
 function renderWithGrid(styleId: string, cardData: CardData, outFile: string): void {
-  const style = findStyle(styleId);
-  if (!style) {
-    throw new Error(`No style registered with id "${styleId}"`);
-  }
-
-  const tree = style.render(cardData, { positionInSet: 7, setSize: 249 });
+  const tree = renderCard(cardData, styleId, { positionInSet: 7, setSize: 249 });
   const svg = toSvgString(tree, { resolveSymbolSvg, resolveRasterAsset, resolveFontData, measureText });
   const overlay =
     (SHOW_GRID ? buildGridOverlay(tree.width, tree.height) : "") +
