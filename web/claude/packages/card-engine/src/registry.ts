@@ -25,22 +25,6 @@ export function stylesForGame<G extends CardData["gameId"]>(gameId: G): StyleReg
   return STYLE_REGISTRY[gameId];
 }
 
-/** Style metadata without `render` — safe to hand back for an id lookup that doesn't already know the card's game. */
-export interface StyleInfo {
-  id: string;
-  gameId: CardData["gameId"];
-  displayName: string;
-}
-
-/** Finds a style by its opaque id alone, searching across every game. Metadata only — see `renderCard` to actually render. */
-export function findStyle(styleId: string): StyleInfo | undefined {
-  for (const styles of Object.values(STYLE_REGISTRY)) {
-    const found = styles.find((s) => s.id === styleId);
-    if (found) return found;
-  }
-  return undefined;
-}
-
 /**
  * Finds the style with `styleId` for `card`'s game and renders `card` with
  * it. The one place that dispatches on a card's `gameId` tag to reach a
