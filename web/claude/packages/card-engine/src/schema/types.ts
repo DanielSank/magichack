@@ -72,5 +72,5 @@ export interface AssetRef {
   url?: string;
 }
 
-/** The raw values a user has entered for one card, keyed by field key. */
+/** Structure-less representation of a card. */
 export type FieldValues = Record<string, string | number | boolean | string[] | AssetRef | undefined>;

@@ -23,7 +23,7 @@ export function toRegistryStyle<C extends CardData>(style: StyleDef<C>): StyleDe
 }
 
 /**
- * Static, code-defined style registry (Tier 1 — first-party TypeScript
+ * Static, code-defined style registry (Tier 1 - first-party TypeScript
  * styles only; user-authored styles are a future phase requiring
  * sandboxing, not built here). Not a DB table: the backend stores a card's
  * `styleId` as an opaque string and never inspects or runs this.
