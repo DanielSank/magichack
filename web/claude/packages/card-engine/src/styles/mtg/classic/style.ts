@@ -9,7 +9,6 @@ const CARD_HEIGHT = 1050;
 const MARGIN = 36;
 const INK_COLOR = "#1a1408";
 const MUTED_INK = "#4a3d22";
-const TYPE_BAR_FILL = "#ded0ab";
 
 export function renderMtgClassic(card: MtgCardData, context: RenderContext): RenderTree {
   const fields = card.fields;
@@ -113,15 +112,15 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
     boxes.push({
       kind: "text",
       id: "flavor-text",
-      x: MARGIN + 12,
-      y: MARGIN + 556 + 210,
+      x: MARGIN + 42,
+      y: MARGIN + 800,
       width: CARD_WIDTH - MARGIN * 2 - 24,
       height: 70,
       content: [{ kind: "text", text: flavor }],
       fontFamily: "MPlantin",
-      color: MUTED_INK,
+      color: INK_COLOR,
       italic: true,
-      fontFit: { minSize: 12, maxSize: 18 },
+      fontFit: { minSize: 12, maxSize: 36 },
       zIndex: 2,
     });
   }
