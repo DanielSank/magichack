@@ -6,7 +6,7 @@ import type { CardData, StyleRegistry } from "./styles/types.js";
 
 
 export const STYLE_REGISTRY: StyleRegistry = {
-  mtg: [
+  "mtg": [
     { id: "mtg-classic", gameId: "mtg", displayName: "Classic", render: renderMtgClassic },
     { id: "mtg-holo-foil", gameId: "mtg", displayName: "Holo Foil", render: renderMtgHoloFoil },
   ],
@@ -16,10 +16,9 @@ export const STYLE_REGISTRY: StyleRegistry = {
 };
 
 /**
- * Styles available for one game, honestly typed to that game's `CardData`
- * variant (not the full `CardData` union) as long as `gameId` is a literal
- * at the call site — e.g. for populating a style picker once a card's game
- * is already known.
+ * Styles available for one game.
+ * Example use: for populating a style picker once a card's game
+ * is known.
  */
 export function stylesForGame<G extends CardData["gameId"]>(gameId: G): StyleRegistry[G] {
   return STYLE_REGISTRY[gameId];
