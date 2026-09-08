@@ -76,7 +76,7 @@ function renderWithGrid(styleId: string, cardData: CardData, outFile: string): v
   if (!selected) {
     throw new Error(`No style registered with id "${styleId}" for game "${cardData.gameId}"`);
   }
-  const tree = selected.style.render(selected.card, { positionInSet: 7, setSize: 249 });
+  const tree = selected.style.render(selected.cardData, { positionInSet: 7, setSize: 249 });
   const svg = toSvgString(tree, { resolveSymbolSvg, resolveRasterAsset, resolveFontData, measureText });
   const overlay =
     (SHOW_GRID ? buildGridOverlay(tree.width, tree.height) : "") +
