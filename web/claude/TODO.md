@@ -50,20 +50,3 @@ resolution in a commit message or here, your call).
    `toSvgString` as the only thing that turns structured data into markup
    (text always escaped) so a misbehaving style can't smuggle raw `<script>`
    through a text field.
-
-4. **Why do the browser and Node `ToSvgOptions` resolvers have to be
-   completely separate implementations?** Raised 2026-09-08, while building
-   `apps/web/src/render/browserToSvgOptions.ts` against
-   `packages/card-engine/scripts/lib/{assetResolvers,measureText}.ts`. Both
-   sides implement the exact same four callbacks
-   (`resolveSymbolSvg`/`resolveRasterAsset`/`resolveFontData`/`measureText`)
-   from scratch, with real duplicated logic (MIME-type-by-extension tables,
-   the font-variant-lookup-by-family/weight/style logic, the
-   package-root-relative-path convention) — Node's fs/fontkit vs the
-   browser's `import.meta.glob`/Fetch/Canvas are genuinely different APIs,
-   so *some* divergence is unavoidable, but it's worth revisiting whether
-   more of the shared logic (the lookup/caching structure, not the actual
-   I/O) could live in one place both edges import, instead of two
-   from-scratch implementations that could silently drift apart the same
-   way `packages/card-engine/dist/` itself already drifted stale once this
-   session — same "one source of truth" smell.

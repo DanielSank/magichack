@@ -25,7 +25,7 @@ A `RenderTree` is consumed by a renderer to produce a card image, keeping render
 
 ## Repository Structure
 
-Monorepo: pnpm workspaces for the TS side, a fully separate Python service directory so a future Rust rewrite touches one clearly-bounded folder.
+Monorepo: npm workspaces for the TS side, a fully separate Python service directory so a future Rust rewrite touches one clearly-bounded folder.
 
 ```
 /
@@ -34,7 +34,7 @@ Monorepo: pnpm workspaces for the TS side, a fully separate Python service direc
 │   └── playing-cards.yaml
 │
 ├── packages/
-│   └── card-engine/              # shared TS engine — no React, no browser/Node-only APIs
+│   └── card-engine/              # shared TS engine — no frontend framework, no browser/Node-only APIs
 │       ├── src/
 │       │   ├── schema/           # types.ts, load.ts, validate.ts
 │       │   ├── render-tree/      # types.ts: RenderTree, RenderBox, TextRun, CardData, RenderContext
@@ -49,7 +49,7 @@ Monorepo: pnpm workspaces for the TS side, a fully separate Python service direc
 │       └── package.json
 │
 ├── apps/
-│   ├── web/                      # React + Vite + TS frontend
+│   ├── web/                      # Web Components (Lit) + Vite + TS frontend
 │   │   └── src/{features/{auth,editor,sets,gallery}, api/, components/}
 │   │
 │   └── server/                   # FastAPI backend, own pyproject.toml/venv
@@ -169,20 +169,37 @@ Cursor-based pagination on list endpoints.
 
 ## Frontend Architecture
 
-**React + TypeScript + Vite.** Mature schema-driven-form ecosystem (`react-hook-form`), no friction rendering `RenderTree` as SVG (JSX or string injection both work), TanStack Query pairs naturally with the REST backend.
+**Web Components (Lit) + TypeScript + Vite.** Decided 2026-10-03, replacing an earlier React choice, after hands-on comparison across vanilla JS, Web Components, Lit, React, and SolidJS (see `~/src/webapp`, a dedicated side project built specifically to evaluate this).
+Reasoning: this editor is mostly hand-built stateful widgets (property panels, click-to-edit card regions — see below) — exactly the shape of thing Web Components fit natively, with no virtual-DOM/reconciliation layer to work around.
+Custom Elements and Shadow DOM are web platform standards implemented in the browser itself, not a framework with its own release cadence — real weight given this is a solo project expected to live a long time.
 
-- **Schema-driven editor:** `SchemaForm` iterates `game.fields`, rendering the matching control per `field.type`; validation rules come from the same `game-schemas` YAML via card-engine's validator (built into a dynamic Zod schema at runtime — one place "knows" MTG's fields).
-- **Live preview:** on each debounced field change, build `CardData`, call the selected style's `render(cardData, context)` (pure, synchronous, no network), feed the resulting `RenderTree` into card-engine's `toSvgString()`.
+The one real counter-consideration, explicitly not overriding the decision: React's ecosystem has much deeper prebuilt canvas/design-tool libraries (`react-flow`, `react-konva`, `tldraw`-style architectures).
+This only matters for the bonus interactive style creator (see below), which is deferred, not for the core editor.
+
+- **Schema-driven editor:** a `SchemaForm`-equivalent custom element iterates `game.fields`, rendering the matching control per `field.type`; validation rules come from the same `game-schemas` YAML via card-engine's `validateFieldValues` directly (no separate schema-validation library needed — card-engine's own validator already does this work, framework-independent).
+- **Live preview:** on each field change, build `CardData`, call the selected style's `render(cardData, context)` (pure, synchronous, no network), feed the resulting `RenderTree` into card-engine's `toSvgString()`, inject the SVG string directly into the DOM.
 Using the same serializer for preview and export makes WYSIWYG structural, not just a testing goal.
-- **Set editor:** drag-and-drop reorder (`dnd-kit`) over the user's cards, add/remove membership, live "n/N" indicator; previewing any card in a set passes real `positionInSet`/`setSize` into `RenderContext`.
-- **Auth UI:** login/register, protected-route wrapper, "My Library" (cards + sets).
+- **Click-to-edit (added 2026-10-03):** clicking directly into a rendered box on the card (name, rules text, etc.) edits it in place — closer to how MagicSetEditor works than a separate form.
+Because the render target is SVG (real DOM elements, not pixels) and every `RenderBox` already carries real `x/y/width/height`, each box can be a genuinely clickable DOM node with its own listener — no hand-rolled hit-testing math the way a `<canvas>` target would require.
+- **Box-boundary overlay (added 2026-10-03):** an optional toggle on the live preview showing each box's outline — promotes `packages/card-engine/scripts/renderGrid.ts`'s existing dev-only debug overlay into a real feature, both as a click-to-edit affordance (shows users what's clickable) and a style-authoring aid.
+- **(Bonus, deferred) Interactive style creator:** drag-and-drop placement of text/image boxes that emits a declarative style definition, rather than hand-written TypeScript.
+Connects directly to the user-authored-styles security question (`TODO.md`) — a declarative, data-not-code format emitted by a visual tool is the same "Tier 2" mitigation already flagged there.
+This is the one feature where React's deeper canvas/design-tool library ecosystem would be the real counter-argument to Lit, if it's ever built.
+- **Fonts:** users pick a font by typed family name (plain CSS font-matching — works in every browser, no enumeration, no permission prompt) rather than uploads.
+Auto-detection of locally-installed fonts via `window.queryLocalFonts()` (real API, reads font bytes client-side with no upload, but Chromium-only and permission-gated) considered as a later enhancement, not v1.
+- **Font embedding (added 2026-10-03):** decoupled from SVG rendering itself.
+Live preview uses a normal page-level `@font-face` (loaded once, cached, shared across every card on screen) rather than embedding font data into every rendered SVG — `toSvgString`'s `resolveFontData` embedding (base64 `data:` URI) is only needed for standalone/portable output, i.e. at actual export time (see Export below), and even there, subsetting (only the glyphs a card's text actually uses) or outline-conversion (text → vector paths, no font dependency at all) are both worth it over embedding a full font file.
+- **Set editor:** drag-and-drop reorder over the user's cards (hand-rolled HTML5 drag-and-drop + surgical DOM `insertBefore`, not a React-specific library like `dnd-kit` — already prototyped successfully in `~/src/webapp`), add/remove membership, live "n/N" indicator; previewing any card in a set passes real `positionInSet`/`setSize` into `RenderContext`.
+- **Auth UI:** login/register, a protected-route mechanism (exact approach TBD — no framework-provided router the way React has react-router; options include a small hand-rolled router or a library like `@vaadin/router`), "My Library" (cards + sets).
 - **Public gallery:** unauthenticated route, filter by game, paginated `/cards?public=true` and `/sets?public=true`.
-- **Typed API client:** generated from the backend's OpenAPI spec (`openapi-typescript` or `orval`) rather than hand-written fetch calls — this is what makes the "clean API boundary" enforceable day to day, and the first thing that breaks loudly (at typecheck time) if a future Rust backend's contract drifts.
+- **Typed API client:** generated from the backend's OpenAPI spec (`openapi-typescript` or `orval`) rather than hand-written fetch calls — framework-independent, still applies unchanged — this is what makes the "clean API boundary" enforceable day to day, and the first thing that breaks loudly (at typecheck time) if a future Rust backend's contract drifts.
 
 ## Export: Client-Side for v1
 
 **Recommendation:** client-side export, reusing the exact `card-engine` pipeline already powering live preview — `RenderTree → toSvgString() → <canvas> → toBlob('image/png')`.
 On save/publish, optionally `POST` the resulting PNG to `/assets` and attach it as `thumbnailAssetId`.
+
+Unlike live preview (see Frontend Architecture), this is where `toSvgString`'s font embedding actually earns its keep — rasterizing an SVG via `<canvas>` needs the fonts it references to actually resolve, which live-page `@font-face` can't guarantee for an off-DOM render; embed (or outline-convert) only at this step, for whichever fonts the specific card being exported actually uses.
 
 **Why:** the render pipeline already runs entirely client-side for the editor; there's zero marginal infrastructure, and reusing the identical serializer for preview and export makes "what you see is what you export" structural rather than something to maintain by discipline.
 
@@ -194,9 +211,9 @@ Because `card-engine` stays DOM/browser-free from day one, that future service i
 Each milestone is independently demoable and not blocked on unimplemented later work.
 
 - **M1 — Card engine in isolation.** `game-schemas/mtg.yaml` + `playing-cards.yaml`; TS schema loader/validator; `RenderTree` types; `toSvgString()`, including its text+symbol flow/wrap layer and the placeholder `SymbolRegistry`/`parseInlineSymbols`; one style per game, with the MTG style exercising an inline-symbol field (mana cost).
-No React, no backend.
+No frontend framework yet, no backend.
 *Demo:* a script feeding sample `CardData` (including a mana cost with placeholder symbols) through the engine, producing an `.svg` you open in a browser.
-- **M2 — Editor UI, no backend.** Vite/React app, `SchemaForm` driven by the game schema, live SVG preview wired to card-engine, local-only state.
+- **M2 — Editor UI, no backend.** Vite/Lit app, a form driven by the game schema, live SVG preview wired to card-engine, local-only state.
 *Demo:* pick a game, fill fields, watch the card render live.
 - **M3 — Backend CRUD + auth (email/password), no frontend integration.** FastAPI + Postgres (docker-compose), Alembic migrations, router/service/repository layers, register/login/me, Cards & Sets endpoints validating `fieldValues` against the same YAML.
 *Demo:* via Swagger UI/curl — register, log in, create/fetch a card, see a 422 on invalid data.
@@ -218,7 +235,8 @@ No React, no backend.
 ## Testing / Verification
 
 - **card-engine:** Vitest unit tests for the schema validator (valid/invalid per field type/required/enum/pattern); snapshot tests of each style's `render()` output for fixed `CardData`+`RenderContext`; serializer tests for `toSvgString()`; a checked-in "golden" SVG per style as a cheap visual-regression net.
-- **Frontend:** Vitest + React Testing Library for `SchemaForm` and preview wiring; Playwright E2E against a docker-composed backend+db covering register→create→edit→reload, build-a-set→reorder→verify numbering, export→verify the downloaded PNG decodes, publish→log out→view as anonymous visitor.
+- **Frontend:** Vitest for component logic; Playwright E2E against a docker-composed backend+db covering register→create→edit→reload, build-a-set→reorder→verify numbering, export→verify the downloaded PNG decodes, publish→log out→view as anonymous visitor.
+Exact component-level testing approach for Lit TBD (options include `@open-wc/testing`/`@web/test-runner`, the standard Web Components testing stack) — not yet decided the way React Testing Library was implied before.
 - **Backend:** service-layer unit tests with a mocked repository (ownership checks, validation error paths, publish rules); repository/integration tests against a real test Postgres; API tests via FastAPI's `TestClient` for auth-required/forbidden cases and pagination; an OpenAPI-schema snapshot check so breaking contract changes are caught explicitly — this is the artifact a future Rust rewrite has to honor.
 - **Cross-language consistency:** a shared fixture directory of `(gameId, fieldValues, expectedValid)` cases run through both the TS validator (Vitest) and the Python validator (pytest) in CI, so the two hand-written implementations can't silently drift apart.
 The same risk applies one level up, to what makes a `game-schemas/*.yaml` file itself valid — see the JSON Schema note under M3.
@@ -228,8 +246,8 @@ Each milestone above also serves as a manual smoke-test checkpoint.
 ### Critical Files
 
 - `game-schemas/mtg.yaml` (and `playing-cards.yaml`) — the single source of truth both languages parse; get the field-type vocabulary right here first.
-- `packages/card-engine/src/render-tree/types.ts` — `RenderTree`/`RenderBox`/`TextRun`/`CardData`/`RenderContext` shapes every style, the SVG serializer, and the React preview depend on.
+- `packages/card-engine/src/render-tree/types.ts` — `RenderTree`/`RenderBox`/`TextRun`/`CardData`/`RenderContext` shapes every style, the SVG serializer, and the frontend preview depend on.
 - `packages/card-engine/src/schema/validate.ts` — generic field validator, mirrored (and fixture-tested) against `apps/server/app/game_schema/validate.py`.
 - `packages/card-engine/src/render/toSvgString.ts` (specifically its symbol-aware text flow/wrap logic) and `packages/card-engine/src/symbols/registry.ts` — the inline-symbol pipeline; get this right early since M1 is designed to validate it against a real field (mana cost).
 - `apps/server/app/services/card_service.py` — where ownership rules, publish rules, and schema validation converge; the template every other service follows, and the piece most load-bearing for a clean Rust port later.
-- `apps/web/src/components/SchemaForm.tsx` (+ a `CardPreview` component using card-engine's `toSvgString`) — proves the schema-driven-form + live-preview architecture end to end and is reused unmodified through later milestones.
+- `apps/web/src/` — whatever custom elements prove out the schema-driven-form + live-preview architecture end to end (a form element driven by `validateFieldValues`, a preview element wrapping `toSvgString`); exact file layout TBD now that this is being rebuilt in Lit rather than React.
