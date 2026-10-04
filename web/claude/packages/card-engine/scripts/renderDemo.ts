@@ -75,7 +75,7 @@ const sevenOfHearts = `
   gameId: "playing-cards"
   fields:
       suit: hearts
-      rank: 7
+      rank: "7"
 `
 const queenOfSpades = `
   gameId: "playing-cards"
