@@ -31,10 +31,10 @@ export type {
 } from "./render-tree/types.js";
 
 export type { FontStyle, FontWeight, ToSvgOptions } from "./render/toSvgString.js";
-export { toSvgString } from "./render/toSvgString.js";
+export { defaultMeasureText, toSvgString } from "./render/toSvgString.js";
 
-export type { SymbolDef } from "./symbols/registry.js";
-export { findSymbol, symbolsForGame, SYMBOL_REGISTRY } from "./symbols/registry.js";
+export type { SymbolAsset, SymbolMeta } from "./symbols/registry.js";
+export { findSymbolArt, isKnownSymbolId, symbolsForGame, SYMBOL_FONTS, SYMBOL_REGISTRY } from "./symbols/registry.js";
 export { parseInlineSymbols } from "./symbols/parseInlineSymbols.js";
 
 export type { CardAndStyle, CardData, RenderFn, StyleDef } from "./styles/types.js";

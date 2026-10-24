@@ -1,7 +1,7 @@
 import type { TextRun } from "../render-tree/types.js";
-import { findSymbol } from "./registry.js";
+import { isKnownSymbolId } from "./registry.js";
 
-const TOKEN_PATTERN = /\{([0-9]+|[WUBRGXCT])\}/g;
+const TOKEN_PATTERN = /\{([0-9]+|[WUBRGDXYZCT])\}/g;
 
 function tokenToSymbolId(token: string): string | undefined {
   if (/^[0-9]+$/.test(token)) {
@@ -18,10 +18,16 @@ function tokenToSymbolId(token: string): string | undefined {
       return "mana-r";
     case "G":
       return "mana-g";
+    case "D":
+      return "mana-d";
     case "C":
       return "mana-c";
     case "X":
       return "mana-x";
+    case "Y":
+      return "mana-y";
+    case "Z":
+      return "mana-z";
     case "T":
       return "mana-tap";
     default:
@@ -55,7 +61,7 @@ export function parseInlineSymbols(text: string): TextRun[] {
     }
 
     const symbolId = tokenToSymbolId(token);
-    if (symbolId !== undefined && findSymbol(symbolId) !== undefined) {
+    if (symbolId !== undefined && isKnownSymbolId(symbolId)) {
       runs.push({ kind: "symbol", symbolId });
     } else {
       runs.push({ kind: "text", text: fullMatch });

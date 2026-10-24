@@ -70,12 +70,12 @@ exports[`renderPlayingCardClassic > matches its serialized SVG snapshot for cano
 </svg>
 </g>
 <g>
-<svg x="183" y="487.2" width="84" height="84" viewBox="0 0 100 100">
+<svg x="183" y="487.19999999999993" width="84" height="84" viewBox="0 0 100 100">
   <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
 </svg>
 </g>
 <g>
-<svg x="483" y="487.2" width="84" height="84" viewBox="0 0 100 100">
+<svg x="483" y="487.19999999999993" width="84" height="84" viewBox="0 0 100 100">
   <path d="M50 90 C10 60 5 35 25 20 C38 10 50 20 50 32 C50 20 62 10 75 20 C95 35 90 60 50 90 Z" fill="#c0392b"/>
 </svg>
 </g>

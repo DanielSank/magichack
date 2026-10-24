@@ -61,6 +61,8 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       color: INK_COLOR,
       align: "right",
       verticalAlign: "middle",
+      symbolFont: "mtg-large",
+      symbolScale: 1.3,
       zIndex: 2,
     },
     {
@@ -90,6 +92,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       color: INK_COLOR,
       fontFit: { minSize: 14, maxSize: 36 },
       verticalAlign: "top",
+      symbolFont: "mtg-small",
       zIndex: 2,
     },
   ];

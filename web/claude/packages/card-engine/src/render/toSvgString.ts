@@ -12,7 +12,7 @@ import type {
   TextRun,
   VerticalAlign,
 } from "../render-tree/types.js";
-import { findSymbol } from "../symbols/registry.js";
+import { findSymbolArt } from "../symbols/registry.js";
 
 /**
  * Turns a RenderTree into a standalone SVG string.
@@ -120,7 +120,7 @@ function renderBox(
     case "image":
       return renderImageBox(box, transform);
     case "text":
-      return renderTextBox(box, measureText, resolveSymbolSvg, transform);
+      return renderTextBox(box, measureText, resolveSymbolSvg, resolveRasterAsset, transform);
     case "svgAsset":
       return renderSvgAssetBox(box, resolveSymbolSvg, transform);
     case "rasterAsset":
@@ -272,6 +272,7 @@ function wrapTokens(
   weight: FontWeight,
   style: FontStyle,
   measureText: (text: string, fontSize: number, fontFamily: string, weight: FontWeight, style: FontStyle) => number,
+  symbolScale: number,
 ): LayoutToken[][] {
   // No content at all should mean zero lines (an empty text box takes no
   // vertical space) — handled here rather than by filtering empty lines
@@ -297,7 +298,7 @@ function wrapTokens(
       pushLine();
       continue;
     }
-    const width = token.kind === "symbol" ? fontSize : measureText(token.text ?? "", fontSize, fontFamily, weight, style);
+    const width = token.kind === "symbol" ? fontSize * symbolScale : measureText(token.text ?? "", fontSize, fontFamily, weight, style);
     const prefixSpace = currentLine.length > 0 ? spaceWidth : 0;
 
     // Force at least one token per line even if it alone exceeds maxWidth,
@@ -324,8 +325,9 @@ function pickAutoFitSize(
   lineHeightMultiplier: number,
 ): number {
   const { minSize, maxSize } = autoFit;
+  const symbolScale = box.symbolScale ?? 1;
   for (let size = maxSize; size >= minSize; size -= 1) {
-    const lines = wrapTokens(tokens, box.width, size, box.fontFamily, weight, style, measureText);
+    const lines = wrapTokens(tokens, box.width, size, box.fontFamily, weight, style, measureText, symbolScale);
     const blockHeight = lines.length * size * lineHeightMultiplier;
     if (blockHeight <= box.height) return size;
   }
@@ -348,6 +350,7 @@ function renderTextBox(
   box: TextBox,
   measureText: (text: string, fontSize: number, fontFamily: string, weight: FontWeight, style: FontStyle) => number,
   resolveSymbolSvg: (path: string) => string,
+  resolveRasterAsset: ((path: string) => string) | undefined,
   transform: string,
 ): string {
   const lineHeightMultiplier = box.lineHeight ?? DEFAULT_LINE_HEIGHT;
@@ -358,8 +361,9 @@ function renderTextBox(
   const fontFit = typeof box.fontFit === "number"
     ? box.fontFit
     : pickAutoFitSize(tokens, box, box.fontFit, weight, style, measureText, lineHeightMultiplier);
+  const symbolScale = box.symbolScale ?? 1;
 
-  const lines = wrapTokens(tokens, box.width, fontFit, box.fontFamily, weight, style, measureText);
+  const lines = wrapTokens(tokens, box.width, fontFit, box.fontFamily, weight, style, measureText, symbolScale);
   const lineHeight = fontFit * lineHeightMultiplier;
   const blockHeight = lines.length * lineHeight;
   // 0.85 approximates cap-height-to-baseline distance for a font size, absent real metrics.
@@ -378,12 +382,21 @@ function renderTextBox(
           `<text x="${cursorX}" y="${y}" font-family="${escapeAttr(box.fontFamily)}" font-size="${fontFit}" fill="${escapeAttr(box.color)}"${box.italic ? ' font-style="italic"' : ""}${box.bold ? ' font-weight="bold"' : ""}>${escapeText(token.text ?? "")}</text>`,
         );
       } else {
-        const symbol = token.symbolId ? findSymbol(token.symbolId) : undefined;
-        if (symbol) {
+        const symbol = token.symbolId ? findSymbolArt(token.symbolId, box.symbolFont) : undefined;
+        const symbolSize = fontFit * symbolScale;
+        const symbolY = y - fontFit * 0.3 - symbolSize / 2; // centers the (possibly scaled) icon on the same point fontFit*0.8-above-baseline sizing used at scale 1
+        if (symbol?.kind === "svg") {
           const inner = stripOuterSvgTag(resolveSymbolSvg(symbol.svgAssetPath));
-          const symbolY = y - fontFit * 0.8; // roughly aligns the icon's top with the text's cap height
           g.push(
-            `<svg x="${cursorX}" y="${symbolY}" width="${fontFit}" height="${fontFit}" viewBox="0 0 100 100">${inner}</svg>`,
+            `<svg x="${cursorX}" y="${symbolY}" width="${symbolSize}" height="${symbolSize}" viewBox="0 0 100 100">${inner}</svg>`,
+          );
+        } else if (symbol?.kind === "raster") {
+          if (!resolveRasterAsset) {
+            throw new Error(`Symbol "${symbol.id}" is a raster asset but no resolveRasterAsset was given in ToSvgOptions.`);
+          }
+          const href = resolveRasterAsset(symbol.rasterAssetPath);
+          g.push(
+            `<image x="${cursorX}" y="${symbolY}" width="${symbolSize}" height="${symbolSize}" href="${escapeAttr(href)}" preserveAspectRatio="xMidYMid meet"/>`,
           );
         } else {
           // Unregistered symbol id: degrade to a visible placeholder rather than silently dropping content.

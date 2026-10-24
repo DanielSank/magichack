@@ -78,6 +78,8 @@ export function renderMtgHoloFoil(card: MtgCardData, context: RenderContext): Re
       color: INK_COLOR,
       align: "right",
       verticalAlign: "middle",
+      symbolFont: "mtg-large",
+      symbolScale: 1.3,
       zIndex: 2,
     },
     {
@@ -116,6 +118,7 @@ export function renderMtgHoloFoil(card: MtgCardData, context: RenderContext): Re
       color: INK_COLOR,
       fontFit: { minSize: 14, maxSize: 26 },
       verticalAlign: "top",
+      symbolFont: "mtg-small",
       zIndex: 2,
     },
   ];

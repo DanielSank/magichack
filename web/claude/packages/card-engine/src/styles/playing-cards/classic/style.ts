@@ -81,6 +81,7 @@ export function renderPlayingCardClassic(card: PlayingCardsCardData, _context: R
       fontFamily: "sans-serif",
       fontFit: CORNER_PIP_SIZE,
       color,
+      symbolFont: "playing-cards",
       zIndex: 2,
     },
     // Bottom-right corner index — mirrored so it reads correctly when the card is turned around.
@@ -110,6 +111,7 @@ export function renderPlayingCardClassic(card: PlayingCardsCardData, _context: R
       content: symbolRun(symbolId),
       fontFamily: "sans-serif",
       fontFit: CORNER_PIP_SIZE,
+      symbolFont: "playing-cards",
       color,
       rotationDeg: 180,
       zIndex: 2,
@@ -144,6 +146,7 @@ export function renderPlayingCardClassic(card: PlayingCardsCardData, _context: R
           fontFamily: "sans-serif",
           fontFit: PIP_SIZE,
           color,
+          symbolFont: "playing-cards",
           rotationDeg: pip.flipped ? 180 : undefined,
           zIndex: 2,
         });
@@ -161,6 +164,7 @@ export function renderPlayingCardClassic(card: PlayingCardsCardData, _context: R
         fontFamily: "sans-serif",
         fontFit: 240,
         color,
+        symbolFont: "playing-cards",
         zIndex: 2,
       });
       boxes.push({

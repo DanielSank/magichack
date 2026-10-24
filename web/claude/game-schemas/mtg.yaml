@@ -18,7 +18,7 @@ fields:
     label: "Mana Cost"
     # Sequence of brace-delimited symbol tokens, e.g. "{2}{R}{R}".
     # Tokens are resolved to inline icons by the symbol registry at render time.
-    pattern: "^(\\{[0-9WUBRGXC]+\\})*$"
+    pattern: "^(\\{[0-9WUBRGDXYZC]+\\})*$"
 
   - key: types
     type: stringList

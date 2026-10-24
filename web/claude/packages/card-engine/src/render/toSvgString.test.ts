@@ -179,7 +179,92 @@ describe("toSvgString", () => {
     expect(Number(chosenSize)).toBeLessThan(20);
   });
 
-  it("inlines a registered symbol's SVG markup as a nested <svg>", () => {
+  it("inlines a registered SVG symbol's markup as a nested <svg>", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "symbol", symbolId: "suit-hearts" }],
+      fontFamily: "sans-serif",
+      fontFit: 24,
+      color: "#000",
+      symbolFont: "playing-cards",
+    };
+    const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
+    expect(svg).toContain("assets/symbols/suit-hearts.svg");
+    expect(svg).toContain('width="24" height="24"');
+  });
+
+  it("inlines a registered raster symbol's resolved data URI as an <image>", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "symbol", symbolId: "mana-w" }],
+      fontFamily: "sans-serif",
+      fontFit: 24,
+      color: "#000",
+      symbolFont: "mtg-small",
+    };
+    const svg = toSvgString(treeWith(box), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveRasterAsset: (path) => `data:image/png;base64,STUB(${path})`,
+    });
+    expect(svg).toContain("data:image/png;base64,STUB(assets/symbols-mtg-small/mana_w.png)");
+    expect(svg).toContain('width="24" height="24"');
+  });
+
+  it("uses a named symbolFont's override art when the box specifies one", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "symbol", symbolId: "mana-w" }],
+      fontFamily: "sans-serif",
+      fontFit: 24,
+      color: "#000",
+      symbolFont: "mtg-large",
+    };
+    const svg = toSvgString(treeWith(box), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveRasterAsset: (path) => `data:image/png;base64,STUB(${path})`,
+    });
+    expect(svg).toContain("data:image/png;base64,STUB(assets/symbols-mtg-large/mana_w.png)");
+  });
+
+  it("does not render art for a symbol id the named font doesn't list — no fallback to another font", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      // "mtg-large" has no entry for tap, and should NOT fall back to "mtg-small"'s.
+      content: [{ kind: "symbol", symbolId: "mana-tap" }],
+      fontFamily: "sans-serif",
+      fontFit: 24,
+      color: "#000",
+      symbolFont: "mtg-large",
+    };
+    const svg = toSvgString(treeWith(box), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveRasterAsset: (path) => `data:image/png;base64,STUB(${path})`,
+    });
+    expect(svg).not.toContain("mana_t.png");
+    expect(svg).toContain(">{mana-tap}</text>");
+  });
+
+  it("does not render art for a symbol when the box has no symbolFont at all", () => {
     const box: TextBox = {
       kind: "text",
       id: "t",
@@ -192,9 +277,31 @@ describe("toSvgString", () => {
       fontFit: 24,
       color: "#000",
     };
-    const svg = toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg });
-    expect(svg).toContain("assets/symbols/mana-w.svg");
-    expect(svg).toContain('width="24" height="24"');
+    const svg = toSvgString(treeWith(box), {
+      resolveSymbolSvg: stubResolveSymbolSvg,
+      resolveRasterAsset: (path) => `data:image/png;base64,STUB(${path})`,
+    });
+    expect(svg).not.toContain("mana_w.png");
+    expect(svg).toContain(">{mana-w}</text>");
+  });
+
+  it("throws if a raster symbol is used but no resolveRasterAsset was given", () => {
+    const box: TextBox = {
+      kind: "text",
+      id: "t",
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 40,
+      content: [{ kind: "symbol", symbolId: "mana-w" }],
+      fontFamily: "sans-serif",
+      fontFit: 24,
+      color: "#000",
+      symbolFont: "mtg-small",
+    };
+    expect(() => toSvgString(treeWith(box), { resolveSymbolSvg: stubResolveSymbolSvg })).toThrow(
+      /resolveRasterAsset/,
+    );
   });
 
   it("falls back to literal brace text for an unregistered symbol id", () => {

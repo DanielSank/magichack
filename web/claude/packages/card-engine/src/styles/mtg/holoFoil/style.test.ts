@@ -37,7 +37,10 @@ describe("renderMtgHoloFoil", () => {
 
   it("matches its serialized SVG snapshot for a canonical sample card (visual-regression net)", () => {
     const tree = renderMtgHoloFoil(SAMPLE_CARD, SAMPLE_CONTEXT);
-    const svg = toSvgString(tree, { resolveSymbolSvg: resolveSymbolSvgForTests });
+    const svg = toSvgString(tree, {
+      resolveSymbolSvg: resolveSymbolSvgForTests,
+      resolveRasterAsset: (path) => `data:image/png;base64,STUB(${path})`,
+    });
     expect(svg).toMatchSnapshot();
   });
 });

@@ -30,10 +30,16 @@ describe("parseInlineSymbols", () => {
   });
 
   it("resolves the variable and colorless mana tokens", () => {
-    expect(parseInlineSymbols("{X}{C}")).toEqual([
+    expect(parseInlineSymbols("{X}{Y}{Z}{C}")).toEqual([
       { kind: "symbol", symbolId: "mana-x" },
+      { kind: "symbol", symbolId: "mana-y" },
+      { kind: "symbol", symbolId: "mana-z" },
       { kind: "symbol", symbolId: "mana-c" },
     ]);
+  });
+
+  it("resolves the sixth color (Desert)", () => {
+    expect(parseInlineSymbols("{D}")).toEqual([{ kind: "symbol", symbolId: "mana-d" }]);
   });
 
   it("resolves multi-digit generic mana", () => {

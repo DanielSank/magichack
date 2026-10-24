@@ -32,18 +32,9 @@ exports[`renderMtgHoloFoil > matches its serialized SVG snapshot for a canonical
 <text x="157.68" y="73" font-family="Georgia, serif" font-size="36" fill="#241d0d" font-weight="bold">Hatchling</text>
 </g>
 <g>
-<svg x="618" y="46.4" width="32" height="32" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="48" fill="#e0e0e0" stroke="#5a5a5a" stroke-width="4"/>
-  <text x="50" y="66" font-family="sans-serif" font-size="44" font-weight="bold" fill="#5a5a5a" text-anchor="middle">#</text>
-</svg>
-<svg x="650" y="46.4" width="32" height="32" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="48" fill="#f5a191" stroke="#a13b23" stroke-width="4"/>
-  <text x="50" y="66" font-family="sans-serif" font-size="52" font-weight="bold" fill="#a13b23" text-anchor="middle">R</text>
-</svg>
-<svg x="682" y="46.4" width="32" height="32" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="48" fill="#f5a191" stroke="#a13b23" stroke-width="4"/>
-  <text x="50" y="66" font-family="sans-serif" font-size="52" font-weight="bold" fill="#a13b23" text-anchor="middle">R</text>
-</svg>
+<image x="589.2" y="41.599999999999994" width="41.6" height="41.6" href="data:image/png;base64,STUB(assets/symbols-mtg-large/1.png)" preserveAspectRatio="xMidYMid meet"/>
+<image x="630.8000000000001" y="41.599999999999994" width="41.6" height="41.6" href="data:image/png;base64,STUB(assets/symbols-mtg-large/mana_r.png)" preserveAspectRatio="xMidYMid meet"/>
+<image x="672.4000000000001" y="41.599999999999994" width="41.6" height="41.6" href="data:image/png;base64,STUB(assets/symbols-mtg-large/mana_r.png)" preserveAspectRatio="xMidYMid meet"/>
 </g>
 <g>
 <text x="48" y="564" font-family="Georgia, serif" font-size="24" fill="#241d0d">Creature,</text>
@@ -51,10 +42,7 @@ exports[`renderMtgHoloFoil > matches its serialized SVG snapshot for a canonical
 </g>
 <g>
 <text x="48" y="614.1" font-family="Georgia, serif" font-size="26" fill="#241d0d">Flying.</text>
-<svg x="48" y="624.5000000000001" width="26" height="26" viewBox="0 0 100 100">
-  <circle cx="50" cy="50" r="48" fill="#f2e9c9" stroke="#8a6d1a" stroke-width="4"/>
-  <path d="M50 20 L50 50 L72 62" stroke="#8a6d1a" stroke-width="8" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+<image x="48" y="624.5000000000001" width="26" height="26" href="data:image/png;base64,STUB(assets/symbols-mtg-small/mana_t.png)" preserveAspectRatio="xMidYMid meet"/>
 <text x="74" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">:</text>
 <text x="97.4" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">Deal</text>
 <text x="169.16000000000003" y="645.3000000000001" font-family="Georgia, serif" font-size="26" fill="#241d0d">1</text>

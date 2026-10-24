@@ -49,6 +49,8 @@ export interface TextBox extends BaseBox {
   bold?: boolean;
   /** Multiplier of font size. Defaults to a renderer-chosen value (~1.2) if omitted. */
   lineHeight?: number;
+  symbolFont?: string;
+  symbolScale?: number;
 }
 
 export interface ImageBox extends BaseBox {
@@ -73,12 +75,11 @@ export interface EllipseBox extends BaseBox {
 }
 
 /**
- * A box whose content is a bundled SVG asset shipped with the package (e.g.
- * a style's decorative background/texture) — not user-uploaded content, so
- * unlike ImageBox it's not an AssetRef. Resolved and inlined the same way
- * inline symbols are (see ToSvgOptions.resolveSymbolSvg in render/toSvgString.ts):
- * a style names an asset path, and the actual file bytes are read at the
- * edge, keeping card-engine itself free of file I/O.
+ * A box whose content is a bundled SVG asset shipped with the package.
+ * Resolved and inlined the same way inline symbols are: a style names an asset
+ * path, and the actual file bytes are read at the edge, keeping card-engine
+ * itself free of file I/O. See ToSvgOptions.resolveSymbolSvg in
+ * render/toSvgString.ts).
  */
 export interface SvgAssetBox extends BaseBox {
   kind: "svgAsset";
@@ -86,15 +87,11 @@ export interface SvgAssetBox extends BaseBox {
 }
 
 /**
- * SvgAssetBox's raster sibling: a package-bundled JPG/PNG shipped with a
- * style (e.g. a photographic frame texture), not user-uploaded. Unlike
- * ImageBox it's not an AssetRef. Resolved the same way (see
- * ToSvgOptions.resolveRasterAsset in render/toSvgString.ts): a style names
- * an asset path, and the edge reads the real file and hands back a ready-to-
- * embed data URI, keeping card-engine itself free of file I/O. Unlike
- * SvgAssetBox (always stretched to the box, fine for vector art designed to
- * fill any aspect ratio), raster photographic content usually shouldn't be
- * distorted, so this carries the same `fit` option as ImageBox.
+ * SvgAssetBox's raster sibling: a package-bundled JPG/PNG shipped with a style.
+ * Not user-uploaded. Unlike ImageBox it's not an AssetRef. Unlike SvgAssetBox
+ * (always stretched to the box, fine for vector art designed to fill any aspect
+ * ratio), raster photographic content usually shouldn't be distorted, so this
+ * carries the same `fit` option as ImageBox.
  */
 export interface RasterAssetBox extends BaseBox {
   kind: "rasterAsset";
@@ -105,10 +102,10 @@ export interface RasterAssetBox extends BaseBox {
 export type RenderBox = TextBox | ImageBox | RectBox | EllipseBox | SvgAssetBox | RasterAssetBox;
 
 /**
- * The declarative output of a style's render() function: a set of
- * positioned boxes with fully-resolved values. Renderers (toSvgString now,
- * others later) consume this and never see CardData or style code directly —
- * that separation is what keeps the rendering backend swappable.
+ * The declarative output of a style's render() function: a set of positioned boxes
+ * with fully-resolved values. Renderers (toSvgString now, others later) consume
+ * this and never see CardData or style code directly. This separation keeps the
+ * rendering backend swappable.
  */
 export interface RenderTree {
   width: number;
