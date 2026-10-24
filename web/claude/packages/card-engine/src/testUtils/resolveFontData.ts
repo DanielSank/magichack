@@ -1,8 +1,9 @@
 import { readFileSync } from "node:fs";
-import { dirname, join, resolve } from "node:path";
+import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { FontStyle, FontWeight } from "../render/toSvgString.js";
+import { mimeTypeForFontExtension, toDataUri } from "../render/resolverHelpers.js";
 import { MTG_FONT_VARIANTS } from "../styles/mtg/fonts/manifest.js";
 
 const thisDir = dirname(fileURLToPath(import.meta.url));
@@ -27,5 +28,5 @@ export function resolveFontDataForTests(
   );
   if (!variant) return undefined;
   const bytes = readFileSync(join(fontsDir, variant.fileName));
-  return `data:font/woff2;base64,${bytes.toString("base64")}`;
+  return toDataUri(bytes.toString("base64"), mimeTypeForFontExtension(extname(variant.fileName)));
 }

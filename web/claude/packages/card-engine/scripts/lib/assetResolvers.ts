@@ -9,7 +9,7 @@ import { dirname, extname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import type { FontStyle, FontWeight } from "../../src/render/toSvgString.js";
-import { findFontVariant, mimeTypeForExtension, toDataUri } from "../../src/render/resolverHelpers.js";
+import { findFontVariant, mimeTypeForExtension, mimeTypeForFontExtension, toDataUri } from "../../src/render/resolverHelpers.js";
 import { MTG_FONT_VARIANTS } from "../../src/styles/mtg/fonts/manifest.js";
 
 const scriptDir = dirname(fileURLToPath(import.meta.url));
@@ -30,5 +30,5 @@ export function resolveFontData(fontFamily: string, weight: FontWeight, style: F
   const variant = findFontVariant(MTG_FONT_VARIANTS, fontFamily, weight, style);
   if (!variant) return undefined;
   const bytes = readFileSync(join(packageRoot, "src/styles/mtg/fonts", variant.fileName));
-  return toDataUri(bytes.toString("base64"), "font/woff2");
+  return toDataUri(bytes.toString("base64"), mimeTypeForFontExtension(extname(variant.fileName)));
 }

@@ -22,6 +22,18 @@ export function mimeTypeForExtension(extension: string): string {
   return RASTER_MIME_TYPES[extension.toLowerCase()] ?? "application/octet-stream";
 }
 
+const FONT_MIME_TYPES: Record<string, string> = {
+  ".woff2": "font/woff2",
+  ".woff": "font/woff",
+  ".ttf": "font/ttf",
+  ".otf": "font/otf",
+};
+
+/** `extension` includes the leading dot (e.g. ".ttf"), matching `node:path`'s `extname()`. */
+export function mimeTypeForFontExtension(extension: string): string {
+  return FONT_MIME_TYPES[extension.toLowerCase()] ?? "application/octet-stream";
+}
+
 export function toDataUri(base64: string, mimeType: string): string {
   return `data:${mimeType};base64,${base64}`;
 }

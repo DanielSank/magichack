@@ -43,4 +43,4 @@ export { selectStyle, stylesForGame, STYLE_REGISTRY } from "./registry.js";
 export type { FontVariant } from "./styles/mtg/fonts/manifest.js";
 export { MTG_FONT_VARIANTS } from "./styles/mtg/fonts/manifest.js";
 
-export { findFontVariant, mimeTypeForExtension, toDataUri } from "./render/resolverHelpers.js";
+export { findFontVariant, mimeTypeForExtension, mimeTypeForFontExtension, toDataUri } from "./render/resolverHelpers.js";
