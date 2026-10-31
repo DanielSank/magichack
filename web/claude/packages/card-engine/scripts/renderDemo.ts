@@ -26,28 +26,45 @@ function loadSchema(gameId: string): GameSchema {
   return parseGameSchema(yamlText);
 }
 
-function renderAndSave(cardString: string, styleId: string, context: RenderContext, outFile: string): void {
+function renderAndSave(
+    cardString: string,
+    styleId: string,
+    context: Omit<RenderContext, "gameSymbols">,
+    outFile: string,
+): void {
   const raw = parseYaml(cardString) as { gameId: string; fields: FieldValues };
   const schema = loadSchema(raw.gameId);
+  // GameSchema {
+  //   id: string;
+  //   name: string;
+  //   defaultStyleId: string;
+  //   fields: FieldDef[];
+  //   symbols: SymbolMeta[]
+  // }
 
-  // validateFieldValues works schema-first: it doesn't know about any
-  // specific game's Card type, only the generic FieldValues shape it
-  // validates untrusted data against. Widening to that here is always safe
-  // (every Card's fields already satisfy FieldValues' value union). Unlike
-  // renderCard's game dispatch, this one needs no runtime check first.
   const result = validateFieldValues(schema, raw.fields);
+  // ValidationResult { valid: boolean; errors: FieldError[] }
+
   if (!result.valid) {
     console.error(`Validation failed for ${outFile}:`, result.errors);
     process.exitCode = 1;
     return;
   }
   const cardData = { gameId: raw.gameId, fields: raw.fields } as unknown as CardData;
+  // CardData =
+  //  | { gameId: "mtg"; fields: MtgCard }
+  //  | { gameId: "playing-cards"; fields: PlayingCardsCard };
 
-  const selected = selectStyle(cardData, styleId);
-  if (!selected) {
+  const cardAndStyle = selectStyle(cardData, styleId);
+  // CardAndStyle<C extends CardData = CardData> {
+  //   cardData: C;
+  //   style: StyleDef<C>;
+  // }
+
+  if (!cardAndStyle) {
     throw new Error(`No style registered with id "${styleId}" for game "${cardData.gameId}"`);
   }
-  const tree = selected.style.render(selected.cardData, context);
+  const tree = cardAndStyle.style.render(cardAndStyle.cardData, {...context, gameSymbols: schema.symbols});
   const svg = toSvgString(tree, { resolveSymbolSvg, resolveRasterAsset, resolveFontData, measureText });
   const outPath = join(packageRoot, outFile);
   writeFileSync(outPath, svg, "utf-8");

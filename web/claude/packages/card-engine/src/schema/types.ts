@@ -1,9 +1,10 @@
 /**
- * Types describing a "game" — the set of attributes a card in that game has.
+ * Types describing a "game", the set of attributes a card in that game has.
  * Games are statically defined by the application (see game-schemas/*.yaml),
- * never user-created.
+ * not user-created.
  */
 
+import type { SymbolMeta } from "../symbols/registry.ts";
 export type FieldType = "string" | "text" | "integer" | "boolean" | "enum" | "image" | "stringList";
 
 interface BaseFieldDef {
@@ -60,9 +61,9 @@ export type FieldDef =
 export interface GameSchema {
   id: string;
   name: string;
-  /** Style id used when a card of this game doesn't specify one explicitly. */
   defaultStyleId: string;
   fields: FieldDef[];
+  symbols: SymbolMeta[]
 }
 
 /** Reference to an uploaded image asset. Used as the value of "image" fields. */

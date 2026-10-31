@@ -1,4 +1,7 @@
+/* Load game schema's from serialized description */
+
 import { load as parseYaml } from "js-yaml";
+import type { SymbolMeta } from "../symbols/registry.ts";
 import type { FieldDef, GameSchema } from "./types.js";
 
 const VALID_FIELD_TYPES = new Set(["string", "text", "integer", "boolean", "enum", "image", "stringList"]);
@@ -6,7 +9,7 @@ const VALID_FIELD_TYPES = new Set(["string", "text", "integer", "boolean", "enum
 export class GameSchemaParseError extends Error {}
 
 /**
- * Parses a game schema from raw YAML text.
+ * Parse a game schema from raw YAML text.
  *
  * Deliberately takes a string rather than a file path: card-engine has no
  * dependency on Node's `fs` or any other I/O API, so it stays usable
@@ -50,12 +53,41 @@ export function parseGameSchema(yamlText: string): GameSchema {
     seenKeys.add(field.key);
   }
 
+  if (!Array.isArray(obj.symbols)) {
+    throw new GameSchemaParseError('Game schema "symbols" must be an array');
+  }
+  const symbols = obj.symbols.map((s, i) => parseSymbolDef(s, i, obj.id as string));
+
   return {
     id: obj.id,
     name: obj.name,
     defaultStyleId: obj.defaultStyleId,
-    fields,
+    fields: fields,
+    symbols: symbols,
   };
+}
+
+function parseSymbolDef(raw: unknown, index: number, gameId: string): SymbolMeta{
+  if (typeof raw !== "object" || raw === null) {
+    throw new GameSchemaParseError(`Game "${gameId} symbol[${index}] must be an object`);
+  }
+  const s = raw as Record<string, unknown>;
+  if (typeof s.id !== "string" || s.id.length === 0) {
+    throw new GameSchemaParseError(`Game "${gameId}" symbol[${index}] is missing a valid "id"`);
+  }
+  if (typeof s.token !== "string" || s.token.length !== 1) {
+    throw new GameSchemaParseError(`Game "${gameId}" symbol[${index}] is missing a valid "token"`);
+  }
+  if (typeof s.displayName !== "string" || s.displayName.length === 0) {
+    throw new GameSchemaParseError(`Game "${gameId}" symbol[${index}] is missing a valid "displayName"`);
+  }
+  return {
+    id: s.id,
+    gameId: gameId,
+    displayName: s.displayName,
+    token: s.token,
+  };
+
 }
 
 function parseFieldDef(raw: unknown, index: number, gameId: string): FieldDef {

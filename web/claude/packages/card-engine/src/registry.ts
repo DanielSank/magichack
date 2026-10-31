@@ -1,7 +1,7 @@
 import { renderMtgClassic } from "./styles/mtg/classic/style.js";
 import { renderMtgHoloFoil } from "./styles/mtg/holoFoil/style.js";
 import { renderPlayingCardClassic } from "./styles/playing-cards/classic/style.js";
-import type { CardAndStyle, CardData, StyleDef, StyleRegistry } from "./styles/types.js";
+import type { CardAndStyle, CardData, StyleRegistry } from "./styles/types.js";
 
 
 export const STYLE_REGISTRY: StyleRegistry = {
@@ -23,13 +23,7 @@ export function stylesForGame<G extends CardData["gameId"]>(gameId: G): StyleReg
   return STYLE_REGISTRY[gameId];
 }
 
-export function selectStyle<C extends CardData>(cardData: C, styleId: string): CardAndStyle<C> | undefined {
-  // `as unknown as` (not a direct `as`): the actual registry value is a
-  // union across every game's array, which TS correctly sees as too
-  // unrelated to the caller's specific `C` to allow a direct cast — the
-  // `unknown` hop is where we assert the link `renderCard` used to make
-  // implicitly, now made explicit since `C` is generic here.
-  const styles = STYLE_REGISTRY[cardData.gameId] as unknown as StyleDef<C>[];
-  const style = styles.find((s) => s.id === styleId);
-  return style ? { cardData, style } : undefined;
+export function selectStyle(cardData: CardData, styleId: string): CardAndStyle<CardData> | undefined {
+  const style = STYLE_REGISTRY[cardData.gameId].find((s) => s.id === styleId);
+  return style ? ({ cardData, style } as CardAndStyle<CardData>) : undefined;
 }

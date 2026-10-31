@@ -34,7 +34,7 @@ export type { FontStyle, FontWeight, ToSvgOptions } from "./render/toSvgString.j
 export { defaultMeasureText, toSvgString } from "./render/toSvgString.js";
 
 export type { SymbolAsset, SymbolMeta } from "./symbols/registry.js";
-export { findSymbolArt, isKnownSymbolId, symbolsForGame, SYMBOL_FONTS, SYMBOL_REGISTRY } from "./symbols/registry.js";
+export { findSymbolArt, SYMBOL_FONTS } from "./symbols/registry.js";
 export { parseInlineSymbols } from "./symbols/parseInlineSymbols.js";
 
 export type { CardAndStyle, CardData, RenderFn, StyleDef } from "./styles/types.js";

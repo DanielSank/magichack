@@ -1,0 +1,35 @@
+{
+  "compilerOptions": {
+    "plugins": [{ "name": "ts-lit-plugin" }],
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    // false, not the Vite template's default true: Lit's decorators use
+    // TypeScript's legacy decorator model (see experimentalDecorators
+    // below), and useDefineForClassFields: true makes a class field's own
+    // initializer overwrite the reactive accessor Lit installs for it —
+    // https://lit.dev/msg/class-field-shadowing, hit for real via a console
+    // error on editor-app's gameId/fields fields the first time this ran.
+    "useDefineForClassFields": false,
+    "experimentalDecorators": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}

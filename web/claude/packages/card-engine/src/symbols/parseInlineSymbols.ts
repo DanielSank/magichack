@@ -1,39 +1,7 @@
 import type { TextRun } from "../render-tree/types.js";
-import { isKnownSymbolId } from "./registry.js";
+import type { SymbolMeta } from "./registry.ts";
 
-const TOKEN_PATTERN = /\{([0-9]+|[WUBRGDXYZCT])\}/g;
-
-function tokenToSymbolId(token: string): string | undefined {
-  if (/^[0-9]+$/.test(token)) {
-    return `mana-generic-${token}`;
-  }
-  switch (token) {
-    case "W":
-      return "mana-w";
-    case "U":
-      return "mana-u";
-    case "B":
-      return "mana-b";
-    case "R":
-      return "mana-r";
-    case "G":
-      return "mana-g";
-    case "D":
-      return "mana-d";
-    case "C":
-      return "mana-c";
-    case "X":
-      return "mana-x";
-    case "Y":
-      return "mana-y";
-    case "Z":
-      return "mana-z";
-    case "T":
-      return "mana-tap";
-    default:
-      return undefined;
-  }
-}
+const TOKEN_PATTERN = /\{([0-9A-Z]+)\}/g;
 
 /**
  * Splits text containing brace-delimited symbol tokens (e.g. "{2}{R}{R}", or
@@ -47,7 +15,7 @@ function tokenToSymbolId(token: string): string | undefined {
  * (braces included) instead of throwing — a typo or a symbol that hasn't
  * been registered yet should never break rendering.
  */
-export function parseInlineSymbols(text: string): TextRun[] {
+export function parseInlineSymbols(text: string, symbols: SymbolMeta[]): TextRun[] {
   const runs: TextRun[] = [];
   let lastIndex = 0;
 
@@ -60,9 +28,9 @@ export function parseInlineSymbols(text: string): TextRun[] {
       runs.push({ kind: "text", text: text.slice(lastIndex, index) });
     }
 
-    const symbolId = tokenToSymbolId(token);
-    if (symbolId !== undefined && isKnownSymbolId(symbolId)) {
-      runs.push({ kind: "symbol", symbolId });
+    const maybeSymbolMeta = symbols.find(s => s.token === token);
+    if (maybeSymbolMeta !== undefined) {
+      runs.push({ kind: "symbol", symbolId: maybeSymbolMeta.id });
     } else {
       runs.push({ kind: "text", text: fullMatch });
     }

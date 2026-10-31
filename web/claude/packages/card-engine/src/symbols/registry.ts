@@ -1,9 +1,4 @@
 /**
- * SYMBOL_REGISTRY is the vocabulary. Every symbol id that exists, with metadata
- * (gameId/displayName) but no art. parseInlineSymbols uses it to decide whether
- * a `{...}` token is a real, known symbol, independent of any particular box
- * or font.
- *
  * SYMBOL_FONTS holds actual drawable symbols, grouped into named, self-
  * contained sets (e.g. "mtg-small", "mtg-large"). A TextBox names exactly one
  * font via symbolFont. findSymbolArt looks up within that one font. A box with
@@ -14,34 +9,12 @@ export interface SymbolMeta {
   id: string;
   gameId: string | "shared";
   displayName: string;
+  token: string;
 }
 
 export type SymbolAsset =
   | { id: string; kind: "svg"; svgAssetPath: string }
   | { id: string; kind: "raster"; rasterAssetPath: string };
-
-export const SYMBOL_REGISTRY: SymbolMeta[] = [
-  { id: "mana-w", gameId: "mtg", displayName: "White Mana" },
-  { id: "mana-u", gameId: "mtg", displayName: "Blue Mana" },
-  { id: "mana-b", gameId: "mtg", displayName: "Black Mana" },
-  { id: "mana-r", gameId: "mtg", displayName: "Red Mana" },
-  { id: "mana-g", gameId: "mtg", displayName: "Green Mana" },
-  { id: "mana-d", gameId: "mtg", displayName: "Desert Mana" },
-  { id: "mana-c", gameId: "mtg", displayName: "Colorless Mana" },
-  { id: "mana-tap", gameId: "mtg", displayName: "Tap" },
-  { id: "mana-x", gameId: "mtg", displayName: "Variable Mana (X)" },
-  { id: "mana-y", gameId: "mtg", displayName: "Variable Mana (Y)" },
-  { id: "mana-z", gameId: "mtg", displayName: "Variable Mana (Z)" },
-  ...Array.from({ length: 28 }, (_, n) => ({
-    id: `mana-generic-${n}`,
-    gameId: "mtg" as const,
-    displayName: `Generic Mana (${n})`,
-  })),
-  { id: "suit-hearts", gameId: "playing-cards", displayName: "Hearts" },
-  { id: "suit-diamonds", gameId: "playing-cards", displayName: "Diamonds" },
-  { id: "suit-clubs", gameId: "playing-cards", displayName: "Clubs" },
-  { id: "suit-spades", gameId: "playing-cards", displayName: "Spades" },
-];
 
 const MTG_SMALL_FONT: SymbolAsset[] = [
   { id: "mana-w", kind: "raster", rasterAssetPath: "assets/symbols-mtg-small/mana_w.png" },
@@ -93,15 +66,7 @@ export const SYMBOL_FONTS: Record<string, SymbolAsset[]> = {
   "playing-cards": PLAYING_CARDS_FONT,
 };
 
-export function isKnownSymbolId(symbolId: string): boolean {
-  return SYMBOL_REGISTRY.some((s) => s.id === symbolId);
-}
-
 export function findSymbolArt(symbolId: string, symbolFont: string | undefined): SymbolAsset | undefined {
   if (!symbolFont) return undefined;
   return SYMBOL_FONTS[symbolFont]?.find((s) => s.id === symbolId);
-}
-
-export function symbolsForGame(gameId: string): SymbolMeta[] {
-  return SYMBOL_REGISTRY.filter((s) => s.gameId === gameId || s.gameId === "shared");
 }

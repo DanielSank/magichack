@@ -18,7 +18,7 @@ fields:
     label: "Mana Cost"
     # Sequence of brace-delimited symbol tokens, e.g. "{2}{R}{R}".
     # Tokens are resolved to inline icons by the symbol registry at render time.
-    pattern: "^(\\{[0-9WUBRGDXYZC]+\\})*$"
+    pattern: "^(\\{[0-9A-Z]+\\})*$"
 
   - key: types
     type: stringList
@@ -49,3 +49,36 @@ fields:
   - key: art
     type: image
     label: "Art"
+
+symbols:
+  - id: mana-w
+    token: "W"
+    displayName: "White mana"
+  - id: mana-u
+    token: "U"
+    displayName: "Blue mana"
+  - id: mana-b
+    token: "B"
+    displayName: "Black mana"
+  - id: mana-r
+    token: "R"
+    displayName: "Red mana"
+  - id: mana-g
+    token: "G"
+    displayName: "Green mana"
+  - id: mana-c
+    token: "C"
+    displayName: "Colorless mana"
+  - id: mana-x
+    token: "X"
+    displayName: "Variable mana (X)"
+  - id: mana-y
+    token: "Y"
+    displayName: "Variable mana (Y)"
+  - id: mana-z
+    token: "Z"
+    displayName: "Variable mana (Z)"
+  - id: mana-tap
+    token: "T"
+    displayName: "Tap"
+

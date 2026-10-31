@@ -1,4 +1,5 @@
 import type { AssetRef } from "../schema/types.js";
+import type { SymbolMeta } from "../symbols/registry.ts";
 
 /**
  * Everything a style is allowed to know beyond the card's own fields,
@@ -8,6 +9,7 @@ import type { AssetRef } from "../schema/types.js";
 export interface RenderContext {
   positionInSet?: number;
   setSize?: number;
+  gameSymbols: SymbolMeta[];
 }
 
 /**

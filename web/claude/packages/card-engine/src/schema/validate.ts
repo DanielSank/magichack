@@ -1,3 +1,7 @@
+/*
+ * Validate card data against a game's schema.
+ */
+
 import type { FieldDef, FieldValues, GameSchema } from "./types.js";
 
 export interface FieldError {
@@ -14,16 +18,17 @@ export interface ValidationResult {
  * Validates a card's field values against its game schema.
  *
  * This logic is intentionally simple and self-contained (no external
- * validation library) because it has a hand-written mirror in the Python
- * backend (apps/server/app/game_schema/validate.py) — the two are kept in
- * sync via a shared fixture suite (see game-schemas' sibling test fixtures),
- * not by sharing code across languages. Keep any change here small and
- * mirror it on the Python side.
+ * validation library) because it has a hand-written mirror in the backend
+ * (apps/server/app/game_schema/validate.py). The two are kept in sync via a
+ * shared fixture suite (see game-schemas' sibling test fixtures), not by
+ * sharing code across languages. Keep any change here small and mirror it on
+ * the backend side.
  */
 export function validateFieldValues(schema: GameSchema, values: FieldValues): ValidationResult {
   const errors: FieldError[] = [];
   const knownKeys = new Set(schema.fields.map((f) => f.key));
 
+  // Record an error for each key in values that isn't in schema
   for (const key of Object.keys(values)) {
     if (!knownKeys.has(key)) {
       errors.push({ key, message: `Unknown field "${key}" for game "${schema.id}"` });
