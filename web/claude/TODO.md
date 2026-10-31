@@ -50,3 +50,11 @@ resolution in a commit message or here, your call).
    `toSvgString` as the only thing that turns structured data into markup
    (text always escaped) so a misbehaving style can't smuggle raw `<script>`
    through a text field.
+
+4. Get rid of "as" casts in card-engine.
+
+5. Check format strings. I think I did $variable in places where I meant ${variable}.
+
+6. Delete commented stuff like CardData.
+
+7. Make sure all throws in renderDemo happen there and not in subroutines.

@@ -1,23 +1,28 @@
 import { describe, expect, it } from "vitest";
 import { toSvgString } from "../../../render/toSvgString.js";
 import type { RenderContext } from "../../../render-tree/types.js";
-import type { CardData } from "../../../styles/types.js";
+import type { SymbolMeta } from "../../../symbols/registry.ts";
+import type { Card } from "../../../games/magic.js";
 import { resolveSymbolSvgForTests } from "../../../testUtils/resolveSymbolSvg.js";
 import { renderMtgHoloFoil } from "./style.js";
 
-const SAMPLE_CARD: CardData = {
-  gameId: "mtg",
-  fields: {
-    name: "Ember Hatchling",
-    cost: "{1}{R}{R}",
-    types: ["Creature", "Dragon"],
-    rules: ["Flying.", "{T}: Deal 1 damage to any target."],
-    power: "2",
-    toughness: "2",
-    flavor: "It hatched already breathing fire.",
-  },
+const SAMPLE_CARD: Card = {
+  name: "Ember Hatchling",
+  cost: "{1}{R}{R}",
+  types: ["Creature", "Dragon"],
+  rules: ["Flying.", "{T}: Deal 1 damage to any target."],
+  power: "2",
+  toughness: "2",
+  flavor: "It hatched already breathing fire.",
 };
-const SAMPLE_CONTEXT: RenderContext = { positionInSet: 7, setSize: 249 };
+
+const SAMPLE_SYMBOLS: SymbolMeta[] = [
+  { id: "mana-generic-1", gameId: "mtg", displayName: "Generic 1", token: "1" },
+  { id: "mana-r", gameId: "mtg", displayName: "Red", token: "R" },
+  { id: "mana-tap", gameId: "mtg", displayName: "Tap", token: "T" },
+];
+
+const SAMPLE_CONTEXT: RenderContext = { positionInSet: 7, setSize: 249, gameSymbols: SAMPLE_SYMBOLS };
 
 describe("renderMtgHoloFoil", () => {
   it("paints the foil background behind every other box", () => {

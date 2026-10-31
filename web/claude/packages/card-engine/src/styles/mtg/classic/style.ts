@@ -1,5 +1,5 @@
 import type { RenderBox, RenderContext, RenderTree } from "../../../render-tree/types.js";
-import type { MtgCardData } from "../../../styles/types.js";
+import type { Card } from "../../../games/magic.js";
 import { parseInlineSymbols } from "../../../symbols/parseInlineSymbols.js";
 
 const CARD_WIDTH = 750;
@@ -10,16 +10,15 @@ const MARGIN = 36;
 const INK_COLOR = "#1a1408";
 const MUTED_INK = "#4a3d22";
 
-export function renderMtgClassic(card: MtgCardData, context: RenderContext): RenderTree {
-  const fields = card.fields;
-  const name = fields.name;
-  const cost = fields.cost ?? "";
-  const typeLine = fields.types.join(", ");
-  const rulesText = (fields.rules ?? []).join("\n");
-  const power = fields.power ?? "";
-  const toughness = fields.toughness ?? "";
-  const flavor = fields.flavor ?? "";
-  const art = fields.art;
+export function renderMtgClassic(card: Card, context: RenderContext): RenderTree {
+  const name = card.name;
+  const cost = card.cost ?? "";
+  const typeLine = card.types.join(", ");
+  const rulesText = (card.rules ?? []).join("\n");
+  const power = card.power ?? "";
+  const toughness = card.toughness ?? "";
+  const flavor = card.flavor ?? "";
+  const art = card.art;
 
   const boxes: RenderBox[] = [
     {
@@ -55,7 +54,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       y: MARGIN + 20,
       width: 160,
       height: 56,
-      content: parseInlineSymbols(cost),
+      content: parseInlineSymbols(cost, context.gameSymbols),
       fontFamily: "Georgia, serif",
       fontFit: 32,
       color: INK_COLOR,
@@ -87,7 +86,7 @@ export function renderMtgClassic(card: MtgCardData, context: RenderContext): Ren
       y: 680,
       width: CARD_WIDTH - MARGIN * 2 - 100,
       height: 260,
-      content: parseInlineSymbols(rulesText),
+      content: parseInlineSymbols(rulesText, context.gameSymbols),
       fontFamily: "MPlantin",
       color: INK_COLOR,
       fontFit: { minSize: 14, maxSize: 36 },

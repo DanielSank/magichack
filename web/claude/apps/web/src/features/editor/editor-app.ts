@@ -1,7 +1,7 @@
 import { html, LitElement } from "lit";
 import { customElement, state } from "lit/decorators.js";
-import { validateFieldValues } from "@magichack/card-engine";
-import type { CardData, FieldValues } from "@magichack/card-engine";
+import { isGameId, parseCardData } from "@magichack/card-engine";
+import type { FieldValues } from "@magichack/card-engine";
 
 import { GAME_SCHEMAS } from "../../gameSchemas.js";
 import "./card-preview.js";
@@ -33,10 +33,9 @@ export class EditorAppElement extends LitElement {
     const game = GAME_SCHEMAS.find((g) => g.id === this.gameId);
     if (!game) throw new Error(`Unknown game "${this.gameId}"`);
 
-    const { valid } = validateFieldValues(game, this.fields);
-    const cardData = valid ? ({ gameId: game.id, fields: this.fields } as unknown as CardData) : undefined;
-    // CardData is a union over objects { gameId: string; fields: <Card> } where <Card> is a card
-    // type.
+    const gameId = game.id;
+    if (!isGameId(gameId)) throw new Error(`Unknown game id "${gameId}"`);
+    const maybeCardData = parseCardData(gameId, game, this.fields);
 
     return html`
       <div class="editor">
@@ -49,8 +48,13 @@ export class EditorAppElement extends LitElement {
           <schema-form .schema=${game} .fieldValues=${this.fields} @fields-change=${this.#handleFieldsChange}></schema-form>
         </div>
         <div class="editorPreview">
-          ${cardData
-            ? html`<card-preview .cardData=${cardData} .styleId=${game.defaultStyleId}></card-preview>`
+          ${!Array.isArray(maybeCardData)
+            ? html`<card-preview
+                .gameId=${gameId}
+                .cardData=${maybeCardData}
+                .gameSymbols=${game.symbols}
+                .styleId=${game.defaultStyleId}
+              ></card-preview>`
             : html`<p>Fill in the required fields to see a preview.</p>`}
         </div>
       </div>

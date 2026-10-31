@@ -6,6 +6,7 @@ const SCHEMA: GameSchema = {
   id: "test-game",
   name: "Test Game",
   defaultStyleId: "test-classic",
+  symbols: [],
   fields: [
     { key: "name", label: "Name", type: "string", required: true, maxLength: 10 },
     { key: "code", label: "Code", type: "string", pattern: "^[A-Z]{3}$" },

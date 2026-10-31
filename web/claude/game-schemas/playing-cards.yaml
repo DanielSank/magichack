@@ -19,3 +19,5 @@ fields:
     type: image
     label: "Custom Art"
     # Optional — replaces the default pip layout with custom art if provided.
+
+symbols: []

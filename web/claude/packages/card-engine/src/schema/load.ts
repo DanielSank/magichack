@@ -75,7 +75,7 @@ function parseSymbolDef(raw: unknown, index: number, gameId: string): SymbolMeta
   if (typeof s.id !== "string" || s.id.length === 0) {
     throw new GameSchemaParseError(`Game "${gameId}" symbol[${index}] is missing a valid "id"`);
   }
-  if (typeof s.token !== "string" || s.token.length !== 1) {
+  if (typeof s.token !== "string" || s.token.length === 0) {
     throw new GameSchemaParseError(`Game "${gameId}" symbol[${index}] is missing a valid "token"`);
   }
   if (typeof s.displayName !== "string" || s.displayName.length === 0) {

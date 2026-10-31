@@ -69,6 +69,39 @@ symbols:
   - id: mana-c
     token: "C"
     displayName: "Colorless mana"
+  - id: mana-generic-0
+    token: "0"
+    displayName: "Generic mana (0)"
+  - id: mana-generic-1
+    token: "1"
+    displayName: "Generic mana (1)"
+  - id: mana-generic-2
+    token: "2"
+    displayName: "Generic mana (2)"
+  - id: mana-generic-3
+    token: "3"
+    displayName: "Generic mana (3)"
+  - id: mana-generic-4
+    token: "4"
+    displayName: "Generic mana (4)"
+  - id: mana-generic-5
+    token: "5"
+    displayName: "Generic mana (5)"
+  - id: mana-generic-6
+    token: "6"
+    displayName: "Generic mana (6)"
+  - id: mana-generic-7
+    token: "7"
+    displayName: "Generic mana (7)"
+  - id: mana-generic-8
+    token: "8"
+    displayName: "Generic mana (8)"
+  - id: mana-generic-9
+    token: "9"
+    displayName: "Generic mana (9)"
+  - id: mana-generic-10
+    token: "10"
+    displayName: "Generic mana (10)"
   - id: mana-x
     token: "X"
     displayName: "Variable mana (X)"

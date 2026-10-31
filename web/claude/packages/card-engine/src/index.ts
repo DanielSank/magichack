@@ -37,8 +37,11 @@ export type { SymbolAsset, SymbolMeta } from "./symbols/registry.js";
 export { findSymbolArt, SYMBOL_FONTS } from "./symbols/registry.js";
 export { parseInlineSymbols } from "./symbols/parseInlineSymbols.js";
 
-export type { CardAndStyle, CardData, RenderFn, StyleDef } from "./styles/types.js";
+export type { RenderFn, StyleDef } from "./styles/types.js";
 export { selectStyle, stylesForGame, STYLE_REGISTRY } from "./registry.js";
+
+export type { CardMap, GameId } from "./games/types.js";
+export { isGameId, parseCardData } from "./schema/parseCardData.js";
 
 export type { FontVariant } from "./styles/mtg/fonts/manifest.js";
 export { MTG_FONT_VARIANTS } from "./styles/mtg/fonts/manifest.js";

@@ -1,21 +1,23 @@
 import { describe, expect, it } from "vitest";
 import { toSvgString } from "../../../render/toSvgString.js";
-import type { CardData } from "../../../styles/types.js";
+import type { RenderContext } from "../../../render-tree/types.js";
+import type { Card } from "../../../games/playing-cards.js";
 import { resolveSymbolSvgForTests } from "../../../testUtils/resolveSymbolSvg.js";
 import { renderPlayingCardClassic } from "./style.js";
 
-const SEVEN_OF_HEARTS: CardData = { gameId: "playing-cards", fields: { suit: "hearts", rank: "7" } };
-const QUEEN_OF_SPADES: CardData = { gameId: "playing-cards", fields: { suit: "spades", rank: "Q" } };
+const SEVEN_OF_HEARTS: Card = { suit: "hearts", rank: "7" };
+const QUEEN_OF_SPADES: Card = { suit: "spades", rank: "Q" };
+const EMPTY_CONTEXT: RenderContext = { gameSymbols: [] };
 
 describe("renderPlayingCardClassic", () => {
   it("lays out one pip per instance of the rank's pip count", () => {
-    const tree = renderPlayingCardClassic(SEVEN_OF_HEARTS, {});
+    const tree = renderPlayingCardClassic(SEVEN_OF_HEARTS, EMPTY_CONTEXT);
     const pipIds = tree.boxes.map((b) => b.id).filter((id) => id.startsWith("pip-"));
     expect(pipIds).toHaveLength(7);
   });
 
   it("renders a face card with a large glyph instead of a pip grid", () => {
-    const tree = renderPlayingCardClassic(QUEEN_OF_SPADES, {});
+    const tree = renderPlayingCardClassic(QUEEN_OF_SPADES, EMPTY_CONTEXT);
     const ids = tree.boxes.map((b) => b.id);
     expect(ids).toContain("face-suit");
     expect(ids).toContain("face-rank");
@@ -23,8 +25,8 @@ describe("renderPlayingCardClassic", () => {
   });
 
   it("uses the red palette for hearts/diamonds and black for clubs/spades", () => {
-    const heartsTree = renderPlayingCardClassic(SEVEN_OF_HEARTS, {});
-    const spadesTree = renderPlayingCardClassic(QUEEN_OF_SPADES, {});
+    const heartsTree = renderPlayingCardClassic(SEVEN_OF_HEARTS, EMPTY_CONTEXT);
+    const spadesTree = renderPlayingCardClassic(QUEEN_OF_SPADES, EMPTY_CONTEXT);
     const heartsRank = heartsTree.boxes.find((b) => b.id === "corner-tl-rank");
     const spadesRank = spadesTree.boxes.find((b) => b.id === "corner-tl-rank");
     expect(heartsRank?.kind === "text" && heartsRank.color).toBe("#c0392b");
@@ -32,15 +34,15 @@ describe("renderPlayingCardClassic", () => {
   });
 
   it("replaces the pip grid with an art box when custom art is provided", () => {
-    const withArt: CardData = { ...SEVEN_OF_HEARTS, fields: { ...SEVEN_OF_HEARTS.fields, art: { assetId: "a1" } } };
-    const tree = renderPlayingCardClassic(withArt, {});
+    const withArt: Card = { ...SEVEN_OF_HEARTS, art: { assetId: "a1" } };
+    const tree = renderPlayingCardClassic(withArt, EMPTY_CONTEXT);
     const ids = tree.boxes.map((b) => b.id);
     expect(ids).toContain("art");
     expect(ids.some((id) => id.startsWith("pip-"))).toBe(false);
   });
 
   it("mirrors the bottom-right corner index with a 180° rotation", () => {
-    const tree = renderPlayingCardClassic(SEVEN_OF_HEARTS, {});
+    const tree = renderPlayingCardClassic(SEVEN_OF_HEARTS, EMPTY_CONTEXT);
     const brRank = tree.boxes.find((b) => b.id === "corner-br-rank");
     expect(brRank?.rotationDeg).toBe(180);
   });
@@ -50,7 +52,7 @@ describe("renderPlayingCardClassic", () => {
       ["seven-of-hearts", SEVEN_OF_HEARTS],
       ["queen-of-spades", QUEEN_OF_SPADES],
     ] as const) {
-      const svg = toSvgString(renderPlayingCardClassic(card, {}), {
+      const svg = toSvgString(renderPlayingCardClassic(card, EMPTY_CONTEXT), {
         resolveSymbolSvg: resolveSymbolSvgForTests,
       });
       expect(svg).toMatchSnapshot(name);

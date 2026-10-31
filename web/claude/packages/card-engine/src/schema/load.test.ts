@@ -22,12 +22,14 @@ fields:
     label: Title
     type: string
     required: true
+symbols: []
 `);
     expect(schema).toEqual({
       id: "demo",
       name: "Demo Game",
       defaultStyleId: "demo-classic",
       fields: [{ key: "title", label: "Title", type: "string", required: true, maxLength: undefined, pattern: undefined }],
+      symbols: [],
     });
   });
 

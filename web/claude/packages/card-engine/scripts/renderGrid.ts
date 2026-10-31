@@ -12,14 +12,18 @@
  */
 import { writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { load as parseYaml } from "js-yaml";
 
+import type { FieldValues } from "../src/schema/types.js";
+import type { RenderTree, RenderContext } from "../src/render-tree/types.js";
 import { selectStyle } from "../src/registry.js";
 import { toSvgString } from "../src/render/toSvgString.js";
-import type { RenderTree } from "../src/render-tree/types.js";
-import type { CardData } from "../src/styles/types.js";
 import { packageRoot, resolveFontData, resolveRasterAsset, resolveSymbolSvg } from "./lib/assetResolvers.js";
 import { measureText } from "./lib/measureText.js";
+import { isGameId, parseCardData, } from "../src/schema/parseCardData.js";
+import { loadSchema, MTG_CARD_YAML } from "./util.js";
 
+const GAME_ID = "mtg";
 const STYLE_ID = "mtg-classic";
 const OUT_FILE = "mtg-classic-grid.local.svg";
 
@@ -71,12 +75,29 @@ function buildBoxOutlinesOverlay(tree: RenderTree): string {
   return `<g>${parts.join("")}</g>`;
 }
 
-function renderWithGrid(styleId: string, cardData: CardData, outFile: string): void {
-  const selected = selectStyle(cardData, styleId);
-  if (!selected) {
-    throw new Error(`No style registered with id "${styleId}" for game "${cardData.gameId}"`);
+function renderWithGrid(
+  cardString: string,
+  styleId: string,
+  context: Omit<RenderContext, "gameSymbols">,
+  outFile: string,
+): void {
+  const raw = parseYaml(cardString) as { gameId: string; fields: FieldValues };
+  // TODO: We should make sure that the parsed card yaml has gameId here instead of casting.
+
+  const gameId = raw.gameId;
+  if (!isGameId(gameId)) { throw new Error(`game id $raw.gameId is not valid.`) }
+  const schema = loadSchema(gameId); // Can throw
+
+  const card = parseCardData(gameId, schema, raw.fields);
+  if (Array.isArray(card)) {
+    throw new Error(`Card parsing failed with errors $maybeCardData`);
   }
-  const tree = selected.style.render(selected.cardData, { positionInSet: 7, setSize: 249 });
+
+  const style = selectStyle(gameId, styleId);
+  if (!style) {
+    throw new Error(`No style registered with id "${styleId}" for game "${gameId}"`);
+  }
+  const tree = style.render(card, {...context, gameSymbols: schema.symbols});
   const svg = toSvgString(tree, { resolveSymbolSvg, resolveRasterAsset, resolveFontData, measureText });
   const overlay =
     (SHOW_GRID ? buildGridOverlay(tree.width, tree.height) : "") +
@@ -92,19 +113,4 @@ function renderWithGrid(styleId: string, cardData: CardData, outFile: string): v
   console.log(`Wrote ${outPath}`);
 }
 
-// Same sample card as renderDemo.ts — swap in whatever fields are relevant
-// to the boxes you're adjusting.
-const sampleCard: CardData = {
-  gameId: "mtg",
-  fields: {
-    name: "Ember Hatchling",
-    cost: "{1}{R}{R}",
-    types: ["Creature", "Dragon"],
-    rules: ["Flying.", "{T}: Deal 1 damage to any target."],
-    power: "2",
-    toughness: "2",
-    flavor: "It hatched already breathing fire.",
-  },
-};
-
-renderWithGrid(STYLE_ID, sampleCard, OUT_FILE);
+renderWithGrid(MTG_CARD_YAML, STYLE_ID, { positionInSet: 7, setSize: 249 }, OUT_FILE);

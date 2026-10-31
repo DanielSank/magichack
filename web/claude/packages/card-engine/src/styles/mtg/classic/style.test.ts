@@ -1,23 +1,29 @@
 import { describe, expect, it } from "vitest";
 import { toSvgString } from "../../../render/toSvgString.js";
 import type { RenderContext } from "../../../render-tree/types.js";
-import type { CardData } from "../../../styles/types.js";
+import type { SymbolMeta } from "../../../symbols/registry.ts";
 import { resolveSymbolSvgForTests } from "../../../testUtils/resolveSymbolSvg.js";
 import { renderMtgClassic } from "./style.js";
+import { Card } from "../../../games/magic.js";
 
-const SAMPLE_CARD: CardData = {
-  gameId: "mtg",
-  fields: {
-    name: "Ember Hatchling",
-    cost: "{1}{R}{R}",
-    types: ["Creature", "Dragon"],
-    rules: ["Flying.", "{T}: Deal 1 damage to any target."],
-    power: "2",
-    toughness: "2",
-    flavor: "It hatched already breathing fire.",
-  },
+const SAMPLE_CARD: Card= {
+  name: "Ember Hatchling",
+  cost: "{1}{R}{R}",
+  types: ["Creature", "Dragon"],
+  rules: ["Flying.", "{T}: Deal 1 damage to any target."],
+  power: "2",
+  toughness: "2",
+  flavor: "It hatched already breathing fire.",
 };
-const SAMPLE_CONTEXT: RenderContext = { positionInSet: 7, setSize: 249 };
+
+const SAMPLE_SYMBOLS: SymbolMeta[] = [
+  { id: "mana-generic-1", gameId: "mtg", displayName: "Generic 1", token: "1" },
+  { id: "mana-r", gameId: "mtg", displayName: "Red", token: "R" },
+  { id: "mana-tap", gameId: "mtg", displayName: "Tap", token: "T" },
+];
+
+const SAMPLE_CONTEXT: RenderContext = { positionInSet: 7, setSize: 249, gameSymbols: SAMPLE_SYMBOLS };
+
 
 describe("renderMtgClassic", () => {
   it("produces the expected set of boxes for a fully-populated card without art", () => {
@@ -35,20 +41,14 @@ describe("renderMtgClassic", () => {
   });
 
   it("adds the art box only when an art asset is set", () => {
-    const withArt: CardData = {
-      ...SAMPLE_CARD,
-      fields: { ...SAMPLE_CARD.fields, art: { assetId: "a1" } },
-    };
+    const withArt: Card = { ...SAMPLE_CARD, art: { assetId: "a1" } };
     const tree = renderMtgClassic(withArt, SAMPLE_CONTEXT);
     expect(tree.boxes.map((b) => b.id)).toContain("art");
   });
 
   it("omits power/toughness and set-number when unset", () => {
-    const minimalCard: CardData = {
-      gameId: "mtg",
-      fields: { name: "Bare Card", types: ["Land"] },
-    };
-    const tree = renderMtgClassic(minimalCard, {});
+    const minimalCard: Card = { name: "Bare Card", types: ["Land"] };
+    const tree = renderMtgClassic(minimalCard, { ...SAMPLE_CONTEXT, positionInSet: undefined, setSize: undefined });
     const ids = tree.boxes.map((b) => b.id);
     expect(ids).not.toContain("power-toughness");
     expect(ids).not.toContain("set-number");

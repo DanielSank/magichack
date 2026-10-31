@@ -1,5 +1,5 @@
 import type { RenderBox, RenderContext, RenderTree } from "../../../render-tree/types.js";
-import type { MtgCardData } from "../../../styles/types.js";
+import type { Card } from "../../../games/magic.js";
 import { parseInlineSymbols } from "../../../symbols/parseInlineSymbols.js";
 
 const CARD_WIDTH = 750;
@@ -16,16 +16,15 @@ const TYPE_BAR_FILL = "#e9dcb8";
  * next to this file — a style's own assets, not shared via the symbol
  * registry) painted full-bleed behind everything else.
  */
-export function renderMtgHoloFoil(card: MtgCardData, context: RenderContext): RenderTree {
-  const fields = card.fields;
-  const name = fields.name;
-  const cost = fields.cost ?? "";
-  const typeLine = fields.types.join(", ");
-  const rulesText = (fields.rules ?? []).join("\n");
-  const power = fields.power ?? "";
-  const toughness = fields.toughness ?? "";
-  const flavor = fields.flavor ?? "";
-  const art = fields.art;
+export function renderMtgHoloFoil(card: Card, context: RenderContext): RenderTree {
+  const name = card.name;
+  const cost = card.cost ?? "";
+  const typeLine = card.types.join(", ");
+  const rulesText = (card.rules ?? []).join("\n");
+  const power = card.power ?? "";
+  const toughness = card.toughness ?? "";
+  const flavor = card.flavor ?? "";
+  const art = card.art;
 
   const boxes: RenderBox[] = [
     {
@@ -72,7 +71,7 @@ export function renderMtgHoloFoil(card: MtgCardData, context: RenderContext): Re
       y: MARGIN,
       width: 160,
       height: 56,
-      content: parseInlineSymbols(cost),
+      content: parseInlineSymbols(cost, context.gameSymbols),
       fontFamily: "Georgia, serif",
       fontFit: 32,
       color: INK_COLOR,
@@ -113,7 +112,7 @@ export function renderMtgHoloFoil(card: MtgCardData, context: RenderContext): Re
       y: MARGIN + 556,
       width: CARD_WIDTH - MARGIN * 2 - 24,
       height: 260,
-      content: parseInlineSymbols(rulesText),
+      content: parseInlineSymbols(rulesText, context.gameSymbols),
       fontFamily: "Georgia, serif",
       color: INK_COLOR,
       fontFit: { minSize: 14, maxSize: 26 },

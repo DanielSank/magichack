@@ -1,34 +1,29 @@
-import type { Card as MtgCard } from "../games/magic.js";
-import type { Card as PlayingCardsCard } from "../games/playing-cards.js";
+import type { GameId, CardMap } from "../games/types.js";
 import type { RenderContext, RenderTree } from "../render-tree/types.js";
 
-export type CardData =
-  | { gameId: "mtg"; fields: MtgCard }
-  | { gameId: "playing-cards"; fields: PlayingCardsCard };
-
-export type MtgCardData = Extract<CardData, { gameId: "mtg" }>;
-export type PlayingCardsCardData = Extract<CardData, { gameId: "playing-cards" }>;
+//export type CardData<G extends GameId = GameId> = {
+//  [P in G]: { gameId: P; fields: CardMap[P] };
+//}[G];
+//
+//export type MtgCardData = Extract<CardData, { gameId: "mtg" }>;
+//export type PlayingCardsCardData = Extract<CardData, { gameId: "playing-cards" }>;
 
 /**
  * A style is a pure function mapping a card and some additional contextual
  * information to a RenderTree. Renderers handle actual drawing.
  */
-export type RenderFn<C extends CardData = CardData> = (card: C, context: RenderContext) => RenderTree;
+export type RenderFn<G extends GameId = GameId> = (card: CardMap[G], context: RenderContext) => RenderTree;
 
-export interface StyleDef<C extends CardData = CardData> {
+export interface StyleDef<G extends GameId = GameId> {
   id: string;
-  gameId: C["gameId"];
+  gameId: G
   displayName: string;
-  render: RenderFn<C>;
+  render: RenderFn<G>;
 }
 
-export type StyleRegistry = { [G in CardData["gameId"]]: StyleDef<Extract<CardData, { gameId: G }>>[] };
-/**
- * Styles, keyed by the game they render.
- * StyleRegistry is not generic; G is a mapped type.
-*/
+export type StyleRegistry = { [G in GameId]: StyleDef<G>[] }
 
-export interface CardAndStyle<C extends CardData = CardData> {
-  cardData: C;
-  style: StyleDef<C>;
-}
+//export interface CardAndStyle<C extends CardData = CardData> {
+//  cardData: C;
+//  style: StyleDef<C>;
+//}

@@ -2,7 +2,7 @@ import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
 import { selectStyle, toSvgString } from "@magichack/card-engine";
-import type { CardData } from "@magichack/card-engine";
+import type { CardMap, GameId, SymbolMeta } from "@magichack/card-engine";
 
 import { getBrowserToSvgOptions } from "../../render/browserToSvgOptions.js";
 
@@ -20,7 +20,13 @@ export class CardPreviewElement extends LitElement {
   `;
 
   @property({ attribute: false })
-  cardData!: CardData;
+  gameId!: GameId;
+
+  @property({ attribute: false })
+  cardData!: CardMap[GameId];
+
+  @property({ attribute: false })
+  gameSymbols: SymbolMeta[] = [];
 
   @property()
   styleId = "";
@@ -37,7 +43,7 @@ export class CardPreviewElement extends LitElement {
   // this method itself causes (setting svg/error below) — without the
   // guard, that would re-trigger itself forever.
   override willUpdate(changed: Map<PropertyKey, unknown>) {
-    if (changed.has("cardData") || changed.has("styleId")) {
+    if (changed.has("cardData") || changed.has("styleId") || changed.has("gameId") || changed.has("gameSymbols")) {
       void this.#renderCard();
     }
   }
@@ -46,19 +52,19 @@ export class CardPreviewElement extends LitElement {
   // getBrowserToSvgOptions() only actually fetches once, ever, so this
   // stays cheap after the very first render.
   async #renderCard() {
-    const { cardData, styleId } = this;
+    const { gameId, cardData, gameSymbols, styleId } = this;
     try {
       const options = await getBrowserToSvgOptions();
-      const selected = selectStyle(cardData, styleId);
-      if (!selected) throw new Error(`No style "${styleId}" registered for game "${cardData.gameId}"`);
-      const svg = toSvgString(selected.style.render(selected.cardData, {}), options);
+      const style = selectStyle(gameId, styleId);
+      if (!style) throw new Error(`No style "${styleId}" registered for game "${gameId}"`);
+      const svg = toSvgString(style.render(cardData, { gameSymbols }), options);
       // Bail if cardData/styleId changed again while this was in flight —
       // same race-condition guard the React version's `cancelled` flag did.
-      if (this.cardData !== cardData || this.styleId !== styleId) return;
+      if (this.cardData !== cardData || this.styleId !== styleId || this.gameId !== gameId) return;
       this.svg = svg;
       this.error = null;
     } catch (e) {
-      if (this.cardData !== cardData || this.styleId !== styleId) return;
+      if (this.cardData !== cardData || this.styleId !== styleId || this.gameId !== gameId) return;
       this.error = e instanceof Error ? e.message : String(e);
     }
   }

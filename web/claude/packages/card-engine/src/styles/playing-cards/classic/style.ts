@@ -4,7 +4,7 @@ import type {
   RenderTree,
   TextRun,
 } from "../../../render-tree/types.js";
-import type { PlayingCardsCardData } from "../../../styles/types.js";
+import type { Card } from "../../../games/playing-cards.js";
 import { pipLayoutForRank } from "../../shared/pipLayout.js";
 
 const CARD_WIDTH = 750;
@@ -34,10 +34,10 @@ function symbolRun(symbolId: string): TextRun[] {
  * dedicated image box) to place standalone suit icons: corner indices and,
  * for numeric ranks, the pip grid computed by the shared pipLayout helper.
  */
-export function renderPlayingCardClassic(card: PlayingCardsCardData, _context: RenderContext): RenderTree {
-  const suit = card.fields.suit;
-  const rank = card.fields.rank;
-  const art = card.fields.art;
+export function renderPlayingCardClassic(card: Card, _context: RenderContext): RenderTree {
+  const suit = card.suit;
+  const rank = card.rank;
+  const art = card.art;
   const color = suitColor(suit);
   const symbolId = suitSymbolId(suit);
 
