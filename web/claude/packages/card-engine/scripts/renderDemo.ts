@@ -29,17 +29,17 @@ function renderAndSave(
   const raw = parseYaml(cardString) as { gameId: string; fields: FieldValues };
   // TODO: We should make sure that the parsed card yaml has gameId here instead of casting.
 
-  const maybeGameId = raw.gameId;
-  if (!isGameId(maybeGameId)) { throw new Error(`game id $raw.gameId is not valid.`) }
-  const schema = loadSchema(maybeGameId); // Can throw
+  const gameId = raw.gameId;
+  if (!isGameId(gameId)) { throw new Error(`game id $raw.gameId is not valid.`) }
+  const schema = loadSchema(gameId); // Can throw
 
-  const maybeCardData = parseCardData(maybeGameId, schema, raw.fields);
+  const maybeCardData = parseCardData(gameId, schema, raw.fields);
   if (Array.isArray(maybeCardData)) {
     throw new Error(`Card parsing failed with errors $maybeCardData`);
   }
-  const style = selectStyle(maybeGameId, styleId);
+  const style = selectStyle(gameId, styleId);
   if (!style) {
-    throw new Error(`No style registered with id "${styleId}" for game "${maybeGameId}"`);
+    throw new Error(`No style registered with id "${styleId}" for game "${gameId}"`);
   }
   const tree = style.render(maybeCardData, {...context, gameSymbols: schema.symbols});
   const svg = toSvgString(tree, { resolveSymbolSvg, resolveRasterAsset, resolveFontData, measureText });
