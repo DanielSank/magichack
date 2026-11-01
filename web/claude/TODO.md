@@ -4,19 +4,7 @@ Open questions/design items raised during development, kept here so they
 don't get lost. Append as they come up; remove once resolved (note the
 resolution in a commit message or here, your call).
 
-1. **Render functions should take `Card`, not `CardData`.** Should
-   `renderMtgClassic` etc. (in `packages/card-engine/src/styles/**/style.ts`)
-   accept the bare per-game `Card` type directly instead of the
-   `gameId`-tagged `MtgCardData`/`PlayingCardsCardData` wrapper
-   (`packages/card-engine/src/styles/types.ts`)?
-   Raised 2026-09-06, during the code-walkthrough lesson plan (stop 4).
-   Current design has `toRegistryStyle` (`registry.ts`) check `card.gameId`
-   on the same object it then passes through to `style.render`, and keeps
-   `RenderFn<C extends CardData>` uniform across every game's style. Worth
-   revisiting once more of stops 4/5 are read, to see if that tradeoff still
-   holds.
-
-2. **Dynamic box resizing based on other boxes' content.** Some boxes should
+1. **Dynamic box resizing based on other boxes' content.** Some boxes should
    be able to grow/shrink based on whether other boxes have content — e.g.
    if `flavor-text` is empty, `rules-text` should be able to claim the space
    it would've occupied, rather than leaving it blank. Raised 2026-09-06.
@@ -28,7 +16,7 @@ resolution in a commit message or here, your call).
    tree itself), and how it interacts with `fontFit`/auto-fit sizing, which
    already varies box content non-trivially.
 
-3. **User-uploaded styles are a real security risk, not just a sandboxing
+2. **User-uploaded styles are a real security risk, not just a sandboxing
    footnote.** Raised 2026-09-07/08, during M2 planning. `packages/card-engine`'s
    `render()` already runs directly in the end user's own browser today (M2's
    live preview, and M5's planned client-side export) — not a future
@@ -50,5 +38,3 @@ resolution in a commit message or here, your call).
    `toSvgString` as the only thing that turns structured data into markup
    (text always escaped) so a misbehaving style can't smuggle raw `<script>`
    through a text field.
-
-4. Check format strings. I think I did $variable in places where I meant ${variable}.
