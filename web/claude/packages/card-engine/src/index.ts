@@ -32,6 +32,7 @@ export type {
 
 export type { FontStyle, FontWeight, ToSvgOptions } from "./render/toSvgString.js";
 export { defaultMeasureText, toSvgString } from "./render/toSvgString.js";
+export { buildBoxOutlinesOverlay, withBoxOutlinesOverlay } from "./render/boxOutlines.js";
 
 export type { SymbolAsset, SymbolMeta } from "./symbols/registry.js";
 export { findSymbolArt, SYMBOL_FONTS } from "./symbols/registry.js";

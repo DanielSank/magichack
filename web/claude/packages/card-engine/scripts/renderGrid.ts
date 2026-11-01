@@ -15,9 +15,10 @@ import { join } from "node:path";
 import { load as parseYaml } from "js-yaml";
 
 import type { FieldValues } from "../src/schema/types.js";
-import type { RenderTree, RenderContext } from "../src/render-tree/types.js";
+import type { RenderContext } from "../src/render-tree/types.js";
 import { selectStyle } from "../src/registry.js";
 import { toSvgString } from "../src/render/toSvgString.js";
+import { buildBoxOutlinesOverlay } from "../src/render/boxOutlines.js";
 import { packageRoot, resolveFontData, resolveRasterAsset, resolveSymbolSvg } from "./lib/assetResolvers.js";
 import { measureText } from "./lib/measureText.js";
 import { isGameId, parseCardData, } from "../src/schema/parseCardData.js";
@@ -31,7 +32,6 @@ const GRID_SPACING = 50;
 const LABEL_EVERY = 100; // draw a coordinate label on every Nth gridline
 
 const SHOW_BOX_OUTLINES = true;
-const OUTLINE_COLOR = "#0066ff"; // distinct from the grid's red, so the two never get confused
 
 function buildGridOverlay(width: number, height: number): string {
   const parts: string[] = [];
@@ -48,28 +48,6 @@ function buildGridOverlay(width: number, height: number): string {
       `<line x1="0" y1="${y}" x2="${width}" y2="${y}" stroke="#ff0033" stroke-width="${major ? 1 : 0.5}" opacity="${major ? 0.6 : 0.3}"/>`,
     );
     if (major) parts.push(`<text x="2" y="${y - 2}" font-size="10" fill="#ff0033">${y}</text>`);
-  }
-  return `<g>${parts.join("")}</g>`;
-}
-
-// Every RenderBox kind shares x/y/width/height/rotationDeg via BaseBox, so
-// one outline routine covers all of them with no per-kind special-casing —
-// same transform toSvgString itself applies for a rotated box, so a rotated
-// box's outline lines up with its actual rendered content.
-function buildBoxOutlinesOverlay(tree: RenderTree): string {
-  const parts: string[] = [];
-  for (const box of tree.boxes) {
-    const transform = box.rotationDeg
-      ? ` transform="rotate(${box.rotationDeg} ${box.x + box.width / 2} ${box.y + box.height / 2})"`
-      : "";
-    parts.push(
-      `<rect x="${box.x}" y="${box.y}" width="${box.width}" height="${box.height}" fill="none" stroke="${OUTLINE_COLOR}" stroke-width="1" stroke-dasharray="4 3"${transform}/>`,
-    );
-    // Inside the top-left corner rather than above it, so a box flush
-    // against an edge (e.g. the full-bleed frame at 0,0) still shows its label.
-    parts.push(
-      `<text x="${box.x + 3}" y="${box.y + 11}" font-size="9" fill="${OUTLINE_COLOR}"${transform}>${box.id}</text>`,
-    );
   }
   return `<g>${parts.join("")}</g>`;
 }

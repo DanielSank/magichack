@@ -1,7 +1,7 @@
 import { css, html, LitElement } from "lit";
 import { customElement, property, state } from "lit/decorators.js";
 import { unsafeSVG } from "lit/directives/unsafe-svg.js";
-import { selectStyle, toSvgString } from "@magichack/card-engine";
+import { selectStyle, toSvgString, withBoxOutlinesOverlay } from "@magichack/card-engine";
 import type { CardMap, GameId, SymbolMeta } from "@magichack/card-engine";
 
 import { getBrowserToSvgOptions } from "../../render/browserToSvgOptions.js";
@@ -31,6 +31,9 @@ export class CardPreviewElement extends LitElement {
   @property()
   styleId = "";
 
+  @property({ type: Boolean, attribute: false })
+  showBoxOutlines = false;
+
   @state()
   private svg: string | null = null;
 
@@ -43,7 +46,13 @@ export class CardPreviewElement extends LitElement {
   // this method itself causes (setting svg/error below) — without the
   // guard, that would re-trigger itself forever.
   override willUpdate(changed: Map<PropertyKey, unknown>) {
-    if (changed.has("cardData") || changed.has("styleId") || changed.has("gameId") || changed.has("gameSymbols")) {
+    if (
+      changed.has("cardData") ||
+      changed.has("styleId") ||
+      changed.has("gameId") ||
+      changed.has("gameSymbols") ||
+      changed.has("showBoxOutlines")
+    ) {
       void this.#renderCard();
     }
   }
@@ -52,16 +61,17 @@ export class CardPreviewElement extends LitElement {
   // getBrowserToSvgOptions() only actually fetches once, ever, so this
   // stays cheap after the very first render.
   async #renderCard() {
-    const { gameId, cardData, gameSymbols, styleId } = this;
+    const { gameId, cardData, gameSymbols, styleId, showBoxOutlines } = this;
     try {
       const options = await getBrowserToSvgOptions();
       const style = selectStyle(gameId, styleId);
       if (!style) throw new Error(`No style "${styleId}" registered for game "${gameId}"`);
-      const svg = toSvgString(style.render(cardData, { gameSymbols }), options);
+      const tree = style.render(cardData, { gameSymbols });
+      const svg = toSvgString(tree, options);
       // Bail if cardData/styleId changed again while this was in flight —
       // same race-condition guard the React version's `cancelled` flag did.
       if (this.cardData !== cardData || this.styleId !== styleId || this.gameId !== gameId) return;
-      this.svg = svg;
+      this.svg = showBoxOutlines ? withBoxOutlinesOverlay(svg, tree) : svg;
       this.error = null;
     } catch (e) {
       if (this.cardData !== cardData || this.styleId !== styleId || this.gameId !== gameId) return;

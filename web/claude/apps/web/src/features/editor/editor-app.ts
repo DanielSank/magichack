@@ -29,6 +29,9 @@ export class EditorAppElement extends LitElement {
   @state()
   private fields: FieldValues = {};
 
+  @state()
+  private showBoxOutlines = false;
+
   override render() {
     const game = GAME_SCHEMAS.find((g) => g.id === this.gameId);
     if (!game) throw new Error(`Unknown game "${this.gameId}"`);
@@ -48,12 +51,17 @@ export class EditorAppElement extends LitElement {
           <schema-form .schema=${game} .fieldValues=${this.fields} @fields-change=${this.#handleFieldsChange}></schema-form>
         </div>
         <div class="editorPreview">
+          <label>
+            <input type="checkbox" .checked=${this.showBoxOutlines} @change=${this.#handleToggleBoxOutlines} />
+            Show box outlines
+          </label>
           ${!Array.isArray(maybeCardData)
             ? html`<card-preview
                 .gameId=${gameId}
                 .cardData=${maybeCardData}
                 .gameSymbols=${game.symbols}
                 .styleId=${game.defaultStyleId}
+                .showBoxOutlines=${this.showBoxOutlines}
               ></card-preview>`
             : html`<p>Fill in the required fields to see a preview.</p>`}
         </div>
@@ -68,6 +76,10 @@ export class EditorAppElement extends LitElement {
 
   #handleFieldsChange(event: CustomEvent<{ fieldValues: FieldValues }>) {
     this.fields = event.detail.fieldValues;
+  }
+
+  #handleToggleBoxOutlines(event: Event) {
+    this.showBoxOutlines = (event.target as HTMLInputElement).checked;
   }
 }
 
