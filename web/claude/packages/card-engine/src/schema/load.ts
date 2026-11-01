@@ -3,6 +3,7 @@
 import { load as parseYaml } from "js-yaml";
 import type { SymbolMeta } from "../symbols/registry.ts";
 import type { FieldDef, GameSchema } from "./types.js";
+import { isRecord, isString, isStringArray } from "./guards.js";
 
 const VALID_FIELD_TYPES = new Set(["string", "text", "integer", "boolean", "enum", "image", "stringList"]);
 
@@ -18,19 +19,18 @@ export class GameSchemaParseError extends Error {}
  * getting the YAML text from wherever makes sense for their environment.
  */
 export function parseGameSchema(yamlText: string): GameSchema {
-  const raw = parseYaml(yamlText);
-  if (typeof raw !== "object" || raw === null) {
+  const obj = parseYaml(yamlText);
+  if (!isRecord(obj)) {
     throw new GameSchemaParseError("Game schema YAML must parse to an object");
   }
-
-  const obj = raw as Record<string, unknown>;
   for (const key of ["id", "name", "defaultStyleId", "fields"]) {
     if (!(key in obj)) {
       throw new GameSchemaParseError(`Game schema is missing required key "${key}"`);
     }
   }
 
-  if (typeof obj.id !== "string" || obj.id.length === 0) {
+  const id = obj.id;
+  if (!isString(id) || id.length === 0) {
     throw new GameSchemaParseError('Game schema "id" must be a non-empty string');
   }
   if (typeof obj.name !== "string" || obj.name.length === 0) {
@@ -43,12 +43,12 @@ export function parseGameSchema(yamlText: string): GameSchema {
     throw new GameSchemaParseError('Game schema "fields" must be an array');
   }
 
-  const fields = obj.fields.map((f, i) => parseFieldDef(f, i, obj.id as string));
+  const fields = obj.fields.map((f, i) => parseFieldDef(f, i, id));
 
   const seenKeys = new Set<string>();
   for (const field of fields) {
     if (seenKeys.has(field.key)) {
-      throw new GameSchemaParseError(`Game "${obj.id}" has duplicate field key "${field.key}"`);
+      throw new GameSchemaParseError(`Game "${id}" has duplicate field key "${field.key}"`);
     }
     seenKeys.add(field.key);
   }
@@ -56,10 +56,10 @@ export function parseGameSchema(yamlText: string): GameSchema {
   if (!Array.isArray(obj.symbols)) {
     throw new GameSchemaParseError('Game schema "symbols" must be an array');
   }
-  const symbols = obj.symbols.map((s, i) => parseSymbolDef(s, i, obj.id as string));
+  const symbols = obj.symbols.map((s, i) => parseSymbolDef(s, i, id));
 
   return {
-    id: obj.id,
+    id: id,
     name: obj.name,
     defaultStyleId: obj.defaultStyleId,
     fields: fields,
@@ -67,11 +67,10 @@ export function parseGameSchema(yamlText: string): GameSchema {
   };
 }
 
-function parseSymbolDef(raw: unknown, index: number, gameId: string): SymbolMeta{
-  if (typeof raw !== "object" || raw === null) {
+function parseSymbolDef(s: unknown, index: number, gameId: string): SymbolMeta{
+  if (!isRecord(s)) {
     throw new GameSchemaParseError(`Game "${gameId} symbol[${index}] must be an object`);
   }
-  const s = raw as Record<string, unknown>;
   if (typeof s.id !== "string" || s.id.length === 0) {
     throw new GameSchemaParseError(`Game "${gameId}" symbol[${index}] is missing a valid "id"`);
   }
@@ -90,11 +89,10 @@ function parseSymbolDef(raw: unknown, index: number, gameId: string): SymbolMeta
 
 }
 
-function parseFieldDef(raw: unknown, index: number, gameId: string): FieldDef {
-  if (typeof raw !== "object" || raw === null) {
+function parseFieldDef(f: unknown, index: number, gameId: string): FieldDef {
+  if (!isRecord(f)) {
     throw new GameSchemaParseError(`Game "${gameId}" field[${index}] must be an object`);
   }
-  const f = raw as Record<string, unknown>;
 
   if (typeof f.key !== "string" || f.key.length === 0) {
     throw new GameSchemaParseError(`Game "${gameId}" field[${index}] is missing a valid "key"`);
@@ -133,12 +131,13 @@ function parseFieldDef(raw: unknown, index: number, gameId: string): FieldDef {
     case "boolean":
       return { key: f.key, label: f.label, type: "boolean", required };
     case "enum": {
-      if (!Array.isArray(f.values) || f.values.some((v) => typeof v !== "string")) {
+      const values = f.values;
+      if (!isStringArray(values)) {
         throw new GameSchemaParseError(
           `Game "${gameId}" field "${f.key}" of type "enum" must have a string[] "values"`,
         );
       }
-      return { key: f.key, label: f.label, type: "enum", required, values: f.values as string[] };
+      return { key: f.key, label: f.label, type: "enum", required, values: values };
     }
     case "image":
       return { key: f.key, label: f.label, type: "image", required };

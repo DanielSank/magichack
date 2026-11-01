@@ -3,6 +3,7 @@
  */
 
 import type { FieldDef, FieldValues, GameSchema } from "./types.js";
+import { isRecord } from "./guards.js";
 
 export interface FieldError {
   key: string;
@@ -105,7 +106,7 @@ function validateFieldValue(
       return;
     }
     case "image": {
-      if (typeof value !== "object" || value === null || typeof (value as { assetId?: unknown }).assetId !== "string") {
+      if (!isRecord(value) || typeof value.assetId !== "string") {
         errors.push({ key: field.key, message: `"${field.label}" must be a valid uploaded image` });
       }
       return;
