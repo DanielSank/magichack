@@ -74,4 +74,4 @@ export interface AssetRef {
 }
 
 /** Structure-less representation of a card. */
-export type FieldValues = Record<string, string | number | boolean | string[] | AssetRef | undefined>;
+export type FieldValues = Record<string, string | number | boolean | string[] | AssetRef | undefined | null>;
