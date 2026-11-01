@@ -23,7 +23,6 @@ import { measureText } from "./lib/measureText.js";
 import { isGameId, parseCardData, } from "../src/schema/parseCardData.js";
 import { loadSchema, MTG_CARD_YAML } from "./util.js";
 
-const GAME_ID = "mtg";
 const STYLE_ID = "mtg-classic";
 const OUT_FILE = "mtg-classic-grid.local.svg";
 
@@ -85,12 +84,12 @@ function renderWithGrid(
   // TODO: We should make sure that the parsed card yaml has gameId here instead of casting.
 
   const gameId = raw.gameId;
-  if (!isGameId(gameId)) { throw new Error(`game id $raw.gameId is not valid.`) }
+  if (!isGameId(gameId)) { throw new Error(`game id ${gameId} is not valid.`) }
   const schema = loadSchema(gameId); // Can throw
 
   const card = parseCardData(gameId, schema, raw.fields);
   if (Array.isArray(card)) {
-    throw new Error(`Card parsing failed with errors $maybeCardData`);
+    throw new Error(`Card parsing failed with errors ${card}`);
   }
 
   const style = selectStyle(gameId, styleId);

@@ -30,12 +30,12 @@ function renderAndSave(
   // TODO: We should make sure that the parsed card yaml has gameId here instead of casting.
 
   const gameId = raw.gameId;
-  if (!isGameId(gameId)) { throw new Error(`game id $raw.gameId is not valid.`) }
+  if (!isGameId(gameId)) { throw new Error(`game id ${gameId} is not valid.`) }
   const schema = loadSchema(gameId); // Can throw
 
   const maybeCardData = parseCardData(gameId, schema, raw.fields);
   if (Array.isArray(maybeCardData)) {
-    throw new Error(`Card parsing failed with errors $maybeCardData`);
+    throw new Error(`Card parsing failed with errors ${maybeCardData}`);
   }
   const style = selectStyle(gameId, styleId);
   if (!style) {
